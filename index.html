@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hidden Value Draft - Can You Beat the Market?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 50%, #1a472a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .game-info {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .info-box {
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .budget-ok { color: #4ade80; }
+        .budget-warning { color: #fbbf24; }
+        .budget-over { color: #f87171; }
+
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-left: 4px solid #fbbf24;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .player-card {
+            background: linear-gradient(145deg, #f5f5f5, #e0e0e0);
+            border-radius: 15px;
+            padding: 20px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .player-card.selected {
+            background: linear-gradient(145deg, #4ade80, #22c55e);
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .player-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .player-letter {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 3rem;
+            font-weight: bold;
+            opacity: 0.2;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-weight: bold;
+        }
+
+        .reputation {
+            color: #f59e0b;
+            letter-spacing: 2px;
+        }
+
+        .player-note {
+            margin-top: 15px;
+            font-style: italic;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            padding: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        .salary-tag {
+            position: absolute;
+            top: 15px;
+            left: -30px;
+            background: #ef4444;
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(-45deg);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            color: #1a1a1a;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(251, 191, 36, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .result-modal.show {
+            display: flex;
+        }
+
+        .result-content {
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .result-title.winner { color: #22c55e; }
+        .result-title.close { color: #f59e0b; }
+        .result-title.try-again { color: #ef4444; }
+
+        .result-details {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .result-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .result-stat:last-child {
+            border-bottom: none;
+        }
+
+        .lesson-box {
+            background: linear-gradient(145deg, #1a472a, #2d5a3f);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .lesson-box h3 {
+            margin-bottom: 10px;
+            color: #fbbf24;
+        }
+
+        .close-modal {
+            margin-top: 20px;
+            background: #1a472a;
+            color: white;
+        }
+
+        .hint-btn {
+            background: transparent;
+            border: 2px dashed rgba(255,255,255,0.5);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+
+        .hint-btn:hover {
+            border-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .hint-text {
+            display: none;
+            background: rgba(251, 191, 36, 0.2);
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hint-text.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .baseball-icon {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .player-card { padding: 15px; }
+            .info-value { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="baseball-icon">&#9918;</span> The Hidden Value Draft</h1>
+            <p class="subtitle">Can You Beat the Market?</p>
+        </header>
+
+        <div class="instructions">
+            <strong>Your Mission:</strong> You're the GM! Pick <strong>2 players</strong> within your <strong>$25M budget</strong>.
+            But remember... the best players aren't always the most famous ones!
+        </div>
+
+        <div class="game-info">
+            <div class="info-box">
+                <div class="info-label">Budget</div>
+                <div class="info-value">$25M</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Spent</div>
+                <div class="info-value budget-ok" id="spent">$0M</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Remaining</div>
+                <div class="info-value budget-ok" id="remaining">$25M</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">Players Selected</div>
+                <div class="info-value" id="selected-count">0 / 2</div>
+            </div>
+        </div>
+
+        <div class="players-grid" id="players-grid">
+            <!-- Player cards will be inserted here by JavaScript -->
+        </div>
+
+        <div class="actions">
+            <button class="hint-btn" onclick="showHint()">Need a Hint?</button>
+            <button class="submit-btn" id="submit-btn" disabled onclick="submitPicks()">Draft My Team!</button>
+            <button class="reset-btn" onclick="resetGame()">Start Over</button>
+        </div>
+
+        <div class="hint-text" id="hint-text">
+            <strong>Hint:</strong> In baseball, <em>On-Base Percentage (OBP)</em> tells you how often a player gets on base.
+            A player who costs less but gets on base more often might be a hidden gem! Think about VALUE, not just fame.
+        </div>
+    </div>
+
+    <div class="result-modal" id="result-modal">
+        <div class="result-content" id="result-content">
+            <!-- Result will be inserted here -->
+        </div>
+    </div>
+
+    <footer>
+        <p>MoneyBall 101 - Track 101 Module 3 Lesson 1 | Learning to find hidden value in data!</p>
+    </footer>
+
+    <script>
+        const players = [
+            {
+                id: 'A',
+                obp: 0.31,
+                hr: 25,
+                salary: 13,
+                reputation: 4,
+                scoutRating: 88,
+                notes: "Crowd favorite, swings for fences",
+                valueIndex: 23.85
+            },
+            {
+                id: 'B',
+                obp: 0.365,
+                hr: 10,
+                salary: 7,
+                reputation: 2,
+                scoutRating: 74,
+                notes: "Quiet hitter, walks a lot",
+                valueIndex: 52.14
+            },
+            {
+                id: 'C',
+                obp: 0.4,
+                hr: 8,
+                salary: 6,
+                reputation: 0,
+                scoutRating: 69,
+                notes: "Older player, still gets on base",
+                valueIndex: 66.67
+            },
+            {
+                id: 'D',
+                obp: 0.335,
+                hr: 18,
+                salary: 9,
+                reputation: 3,
+                scoutRating: 82,
+                notes: "Decent power, solid glove",
+                valueIndex: 37.22
+            },
+            {
+                id: 'E',
+                obp: 0.345,
+                hr: 15,
+                salary: 11,
+                reputation: 2,
+                scoutRating: 76,
+                notes: "Young prospect",
+                valueIndex: 31.36
+            }
+        ];
+
+        const BUDGET = 25;
+        let selectedPlayers = [];
+
+        function createPlayerCard(player) {
+            const stars = '&#11088;'.repeat(player.reputation) || '<span style="opacity:0.3">No stars</span>';
+
+            return `
+                <div class="player-card" id="player-${player.id}" onclick="togglePlayer('${player.id}')">
+                    <div class="salary-tag">$${player.salary}M</div>
+                    <div class="player-letter">${player.id}</div>
+                    <div class="player-name">Player ${player.id}</div>
+                    <div class="stat-row">
+                        <span class="stat-label">OBP</span>
+                        <span class="stat-value">${player.obp.toFixed(3)}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Home Runs</span>
+                        <span class="stat-value">${player.hr}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Salary</span>
+                        <span class="stat-value">$${player.salary}M</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Market Hype</span>
+                        <span class="stat-value reputation">${stars}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Scout Rating</span>
+                        <span class="stat-value">${player.scoutRating}</span>
+                    </div>
+                    <div class="player-note">"${player.notes}"</div>
+                </div>
+            `;
+        }
+
+        function renderPlayers() {
+            const grid = document.getElementById('players-grid');
+            grid.innerHTML = players.map(createPlayerCard).join('');
+        }
+
+        function togglePlayer(playerId) {
+            const player = players.find(p => p.id === playerId);
+            const card = document.getElementById(`player-${playerId}`);
+
+            if (card.classList.contains('disabled')) return;
+
+            if (selectedPlayers.includes(playerId)) {
+                selectedPlayers = selectedPlayers.filter(id => id !== playerId);
+                card.classList.remove('selected');
+            } else if (selectedPlayers.length < 2) {
+                const totalSpent = getTotalSpent() + player.salary;
+                if (totalSpent <= BUDGET) {
+                    selectedPlayers.push(playerId);
+                    card.classList.add('selected');
+                } else {
+                    shakeCard(card);
+                }
+            }
+
+            updateUI();
+        }
+
+        function shakeCard(card) {
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'shake 0.5s ease';
+        }
+
+        function getTotalSpent() {
+            return selectedPlayers.reduce((total, id) => {
+                const player = players.find(p => p.id === id);
+                return total + player.salary;
+            }, 0);
+        }
+
+        function updateUI() {
+            const spent = getTotalSpent();
+            const remaining = BUDGET - spent;
+
+            document.getElementById('spent').textContent = `$${spent}M`;
+            document.getElementById('remaining').textContent = `$${remaining}M`;
+            document.getElementById('selected-count').textContent = `${selectedPlayers.length} / 2`;
+
+            // Update budget colors
+            const spentEl = document.getElementById('spent');
+            const remainingEl = document.getElementById('remaining');
+
+            if (spent > BUDGET) {
+                spentEl.className = 'info-value budget-over';
+                remainingEl.className = 'info-value budget-over';
+            } else if (remaining < 6) {
+                spentEl.className = 'info-value budget-warning';
+                remainingEl.className = 'info-value budget-warning';
+            } else {
+                spentEl.className = 'info-value budget-ok';
+                remainingEl.className = 'info-value budget-ok';
+            }
+
+            // Enable/disable cards based on budget
+            players.forEach(player => {
+                const card = document.getElementById(`player-${player.id}`);
+                if (!selectedPlayers.includes(player.id)) {
+                    if (selectedPlayers.length >= 2 || spent + player.salary > BUDGET) {
+                        card.classList.add('disabled');
+                    } else {
+                        card.classList.remove('disabled');
+                    }
+                }
+            });
+
+            // Enable submit button
+            document.getElementById('submit-btn').disabled = selectedPlayers.length !== 2;
+        }
+
+        function showHint() {
+            document.getElementById('hint-text').classList.toggle('show');
+        }
+
+        function submitPicks() {
+            const selectedData = selectedPlayers.map(id => players.find(p => p.id === id));
+            const totalValue = selectedData.reduce((sum, p) => sum + p.valueIndex, 0);
+            const totalSpent = getTotalSpent();
+            const totalOBP = selectedData.reduce((sum, p) => sum + p.obp, 0);
+
+            // Best possible pick is B + C (value index: 118.81)
+            const bestValue = 118.81;
+            const percentage = (totalValue / bestValue * 100).toFixed(0);
+
+            let resultClass, resultIcon, resultTitle, resultMessage;
+
+            if (selectedPlayers.includes('B') && selectedPlayers.includes('C')) {
+                resultClass = 'winner';
+                resultIcon = '&#127942;';
+                resultTitle = 'Perfect Draft!';
+                resultMessage = "You found the hidden gems! Players B and C have the highest combined value despite lower star ratings. You think like a real Moneyball GM!";
+            } else if (totalValue >= 90) {
+                resultClass = 'close';
+                resultIcon = '&#127775;';
+                resultTitle = 'Great Picks!';
+                resultMessage = "You're on the right track! You found some good value, but there's an even better combination out there.";
+            } else {
+                resultClass = 'try-again';
+                resultIcon = '&#129300;';
+                resultTitle = 'Think Different!';
+                resultMessage = "You might have picked the flashy players, but are they really the best value? Remember: high OBP + low salary = hidden value!";
+            }
+
+            const resultHTML = `
+                <div class="result-icon">${resultIcon}</div>
+                <h2 class="result-title ${resultClass}">${resultTitle}</h2>
+                <p>${resultMessage}</p>
+
+                <div class="result-details">
+                    <div class="result-stat">
+                        <span>Your Picks:</span>
+                        <span><strong>Player ${selectedPlayers[0]} + Player ${selectedPlayers[1]}</strong></span>
+                    </div>
+                    <div class="result-stat">
+                        <span>Total Salary:</span>
+                        <span><strong>$${totalSpent}M</strong></span>
+                    </div>
+                    <div class="result-stat">
+                        <span>Combined OBP:</span>
+                        <span><strong>${totalOBP.toFixed(3)}</strong></span>
+                    </div>
+                    <div class="result-stat">
+                        <span>Value Score:</span>
+                        <span><strong>${totalValue.toFixed(1)}</strong></span>
+                    </div>
+                    <div class="result-stat">
+                        <span>Efficiency:</span>
+                        <span><strong>${percentage}%</strong> of optimal</span>
+                    </div>
+                </div>
+
+                <div class="lesson-box">
+                    <h3>&#128161; The Moneyball Lesson</h3>
+                    <p>The best value comes from finding <strong>underrated players</strong> with high OBP but low market hype.
+                    Player C has the <em>highest OBP (0.400)</em> but <em>no star rating</em> and the <em>lowest salary ($6M)</em>!</p>
+                    <p style="margin-top: 10px;"><strong>Value Index = (OBP × 100) ÷ Salary</strong></p>
+                    <p style="margin-top: 10px;">The optimal pick: <strong>B + C = $13M spent, 118.81 value!</strong></p>
+                </div>
+
+                <button class="close-modal" onclick="closeModal()">Try Again</button>
+            `;
+
+            document.getElementById('result-content').innerHTML = resultHTML;
+            document.getElementById('result-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.remove('show');
+        }
+
+        function resetGame() {
+            selectedPlayers = [];
+            document.querySelectorAll('.player-card').forEach(card => {
+                card.classList.remove('selected', 'disabled');
+            });
+            document.getElementById('hint-text').classList.remove('show');
+            updateUI();
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize game
+        renderPlayers();
+        updateUI();
+    </script>
+</body>
+</html>
