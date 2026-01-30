@@ -44,6 +44,61 @@
             50% { transform: translateY(-8px); }
         }
 
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .step-circle.active {
+            background: #fbbf24;
+            color: #1a1a1a;
+        }
+
+        .step-circle.completed {
+            background: #22c55e;
+        }
+
+        .step-line {
+            width: 40px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        .step-line.completed {
+            background: #22c55e;
+        }
+
+        /* Level Screens */
+        .level-screen {
+            display: none;
+        }
+
+        .level-screen.active {
+            display: block;
+        }
+
         .mission-box {
             background: rgba(255,255,255,0.15);
             border-radius: 15px;
@@ -54,6 +109,17 @@
             line-height: 1.5;
         }
 
+        .level-badge {
+            background: #fbbf24;
+            color: #1a1a1a;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
         .highlight {
             background: #fbbf24;
             color: #1a1a1a;
@@ -62,11 +128,60 @@
             font-weight: bold;
         }
 
+        /* Quiz Styles */
+        .quiz-question {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .quiz-option {
+            background: white;
+            color: #333;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            border-color: #2563eb;
+            transform: scale(1.02);
+        }
+
+        .quiz-option.selected {
+            border-color: #2563eb;
+            background: #dbeafe;
+        }
+
+        .quiz-option.correct {
+            border-color: #22c55e;
+            background: #dcfce7;
+        }
+
+        .quiz-option.wrong {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        /* Draft Game Styles */
         .budget-bar {
             background: rgba(0,0,0,0.3);
             border-radius: 15px;
             padding: 15px 25px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -84,7 +199,7 @@
         }
 
         .budget-value {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
         }
 
@@ -93,15 +208,15 @@
 
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
         .player-card {
             background: white;
             border-radius: 15px;
-            padding: 15px;
+            padding: 12px;
             color: #333;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -117,7 +232,6 @@
         .player-card.selected {
             border-color: #22c55e;
             background: #dcfce7;
-            transform: scale(1.03);
         }
 
         .player-card.disabled {
@@ -127,22 +241,22 @@
         }
 
         .player-avatar {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 5px;
         }
 
         .player-name {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #1e40af;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .player-stat {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
-            font-size: 0.95rem;
+            padding: 5px 0;
+            font-size: 0.9rem;
             border-bottom: 1px solid #eee;
         }
 
@@ -166,23 +280,25 @@
         .price-tag {
             background: #ef4444;
             color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 1rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
+            margin-top: 8px;
             display: inline-block;
         }
 
+        /* Buttons */
         .buttons {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
+            margin-top: 20px;
         }
 
         button {
-            padding: 12px 30px;
+            padding: 12px 25px;
             font-size: 1.1rem;
             font-weight: bold;
             border: none;
@@ -191,29 +307,28 @@
             transition: all 0.2s ease;
         }
 
-        .draft-btn {
+        .primary-btn {
             background: #22c55e;
             color: white;
-            font-size: 1.2rem;
         }
 
-        .draft-btn:hover:not(:disabled) {
+        .primary-btn:hover:not(:disabled) {
             background: #16a34a;
             transform: scale(1.05);
         }
 
-        .draft-btn:disabled {
+        .primary-btn:disabled {
             background: #9ca3af;
             cursor: not-allowed;
         }
 
-        .reset-btn {
+        .secondary-btn {
             background: rgba(255,255,255,0.2);
             color: white;
             border: 2px solid white;
         }
 
-        .reset-btn:hover {
+        .secondary-btn:hover {
             background: rgba(255,255,255,0.3);
         }
 
@@ -232,7 +347,7 @@
             color: #92400e;
             border-radius: 15px;
             padding: 15px 20px;
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
             font-size: 1rem;
         }
@@ -241,121 +356,118 @@
             display: block;
         }
 
-        /* Result Popup */
-        .popup {
+        /* Feedback Box */
+        .feedback-box {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            border-radius: 15px;
             padding: 20px;
-        }
-
-        .popup.show {
-            display: flex;
-        }
-
-        .popup-content {
-            background: white;
-            color: #333;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
+            margin: 20px 0;
             text-align: center;
-            animation: popIn 0.4s ease;
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .feedback-box.show {
+            display: block;
         }
 
-        .popup-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
+        .feedback-box.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #22c55e;
         }
 
-        .popup-title {
-            font-size: 1.8rem;
+        .feedback-box.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        .feedback-icon {
+            font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
-        .popup-title.win { color: #22c55e; }
-        .popup-title.close { color: #f59e0b; }
-        .popup-title.retry { color: #ef4444; }
+        /* Final Screen */
+        .final-screen {
+            text-align: center;
+            padding: 20px;
+        }
 
-        .popup-message {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            line-height: 1.5;
+        .trophy {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite;
+        }
+
+        .congrats-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
         }
 
         .claim-code-box {
             background: linear-gradient(145deg, #22c55e, #16a34a);
             color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
         }
 
         .claim-code-label {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            font-size: 1rem;
+            margin-bottom: 10px;
             opacity: 0.9;
         }
 
         .claim-code {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
             background: white;
             color: #22c55e;
-            padding: 10px 20px;
-            border-radius: 10px;
-            letter-spacing: 2px;
+            padding: 12px 25px;
+            border-radius: 12px;
+            letter-spacing: 3px;
             font-family: monospace;
+            display: inline-block;
         }
 
-        .lesson-box {
-            background: #f0f9ff;
-            border: 2px solid #2563eb;
+        .lesson-summary {
+            background: rgba(255,255,255,0.15);
             border-radius: 15px;
-            padding: 15px;
+            padding: 20px;
             margin: 20px 0;
             text-align: left;
         }
 
-        .lesson-box h3 {
-            color: #2563eb;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
+        .lesson-summary h3 {
+            color: #fbbf24;
+            margin-bottom: 12px;
+            text-align: center;
         }
 
-        .lesson-box p {
-            font-size: 0.95rem;
-            line-height: 1.5;
+        .lesson-summary ul {
+            list-style: none;
+            padding: 0;
         }
 
-        .popup-btn {
-            background: #2563eb;
-            color: white;
-            margin-top: 15px;
+        .lesson-summary li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
         }
 
-        .popup-btn:hover {
-            background: #1e40af;
+        .lesson-summary li::before {
+            content: "✓";
+            position: absolute;
+            left: 5px;
+            color: #4ade80;
+            font-weight: bold;
         }
 
         @media (max-width: 500px) {
             h1 { font-size: 1.5rem; }
-            .budget-value { font-size: 1.4rem; }
-            .player-card { padding: 12px; }
-            .player-name { font-size: 1.2rem; }
+            .budget-value { font-size: 1.3rem; }
+            .player-card { padding: 10px; }
+            .player-name { font-size: 1rem; }
+            .step-line { width: 20px; }
         }
     </style>
 </head>
@@ -366,60 +478,194 @@
             <h1>Moneyball Draft Challenge</h1>
         </header>
 
-        <div class="mission-box">
-            You're the team manager! Pick <span class="highlight">2 players</span> to join your team.<br>
-            You only have <span class="highlight">$25 million</span> to spend. Choose wisely!
-        </div>
-
-        <div class="budget-bar">
-            <div class="budget-item">
-                <div class="budget-label">Your Budget</div>
-                <div class="budget-value">$25M</div>
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-step">
+                <div class="step-circle active" id="step1">1</div>
             </div>
-            <div class="budget-item">
-                <div class="budget-label">Money Spent</div>
-                <div class="budget-value money-left" id="spent">$0M</div>
+            <div class="step-line" id="line1"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step2">2</div>
             </div>
-            <div class="budget-item">
-                <div class="budget-label">Players Picked</div>
-                <div class="budget-value" id="picked">0 / 2</div>
+            <div class="step-line" id="line2"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step3">3</div>
             </div>
         </div>
 
-        <div class="players-grid" id="players-grid"></div>
+        <!-- LEVEL 1: Learn about OBP -->
+        <div class="level-screen active" id="level1">
+            <div class="mission-box">
+                <div class="level-badge">Level 1: Learn the Secret</div><br>
+                Before you draft, you need to know the <strong>secret stat</strong> that smart managers use!
+            </div>
 
-        <div class="buttons">
-            <button class="hint-btn" onclick="toggleHint()">Need a Hint?</button>
-            <button class="draft-btn" id="draft-btn" disabled onclick="checkAnswer()">Draft My Team!</button>
-            <button class="reset-btn" onclick="resetGame()">Start Over</button>
+            <div class="quiz-question">
+                In baseball, what does <strong>OBP</strong> (On-Base Percentage) tell you?
+            </div>
+
+            <div class="quiz-options" id="quiz1-options">
+                <div class="quiz-option" onclick="checkQuiz1('A')">
+                    <strong>A.</strong> How fast a player can run
+                </div>
+                <div class="quiz-option" onclick="checkQuiz1('B')">
+                    <strong>B.</strong> How often a player gets on base (hits, walks, etc.)
+                </div>
+                <div class="quiz-option" onclick="checkQuiz1('C')">
+                    <strong>C.</strong> How many home runs a player hits
+                </div>
+                <div class="quiz-option" onclick="checkQuiz1('D')">
+                    <strong>D.</strong> How popular a player is with fans
+                </div>
+            </div>
+
+            <div class="feedback-box" id="feedback1"></div>
+
+            <div class="buttons">
+                <button class="primary-btn" id="next1-btn" style="display:none;" onclick="goToLevel(2)">Next Level →</button>
+            </div>
         </div>
 
-        <div class="hint-box" id="hint-box">
-            <strong>Hint:</strong> Stars and home runs look cool, but smart managers look at <strong>OBP</strong> (how often a player gets on base). A cheaper player who gets on base a lot might be a better deal!
-        </div>
-    </div>
+        <!-- LEVEL 2: First Draft -->
+        <div class="level-screen" id="level2">
+            <div class="mission-box">
+                <div class="level-badge">Level 2: Your First Draft</div><br>
+                Pick <span class="highlight">2 players</span> for your team with only <span class="highlight">$25 million</span>.<br>
+                Remember: Look for players with HIGH OBP and LOW price!
+            </div>
 
-    <div class="popup" id="popup">
-        <div class="popup-content" id="popup-content"></div>
+            <div class="budget-bar">
+                <div class="budget-item">
+                    <div class="budget-label">Budget</div>
+                    <div class="budget-value">$25M</div>
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Spent</div>
+                    <div class="budget-value money-left" id="spent2">$0M</div>
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Picked</div>
+                    <div class="budget-value" id="picked2">0 / 2</div>
+                </div>
+            </div>
+
+            <div class="players-grid" id="players-grid-2"></div>
+
+            <div class="hint-box" id="hint2">
+                <strong>Hint:</strong> Player C has the highest OBP (0.400) and costs only $6M. That's a great deal!
+            </div>
+
+            <div class="feedback-box" id="feedback2"></div>
+
+            <div class="buttons">
+                <button class="hint-btn" onclick="toggleHint(2)">Need a Hint?</button>
+                <button class="primary-btn" id="check2-btn" disabled onclick="checkLevel2()">Check My Picks!</button>
+            </div>
+        </div>
+
+        <!-- LEVEL 3: Harder Draft -->
+        <div class="level-screen" id="level3">
+            <div class="mission-box">
+                <div class="level-badge">Level 3: The Real Challenge</div><br>
+                Now it's tougher! Pick <span class="highlight">2 players</span> with only <span class="highlight">$15 million</span>.<br>
+                Can you still find the best value?
+            </div>
+
+            <div class="budget-bar">
+                <div class="budget-item">
+                    <div class="budget-label">Budget</div>
+                    <div class="budget-value">$15M</div>
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Spent</div>
+                    <div class="budget-value money-left" id="spent3">$0M</div>
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Picked</div>
+                    <div class="budget-value" id="picked3">0 / 2</div>
+                </div>
+            </div>
+
+            <div class="players-grid" id="players-grid-3"></div>
+
+            <div class="hint-box" id="hint3">
+                <strong>Hint:</strong> With only $15M, you can't afford the expensive stars. Which two cheaper players have the best OBP?
+            </div>
+
+            <div class="feedback-box" id="feedback3"></div>
+
+            <div class="buttons">
+                <button class="hint-btn" onclick="toggleHint(3)">Need a Hint?</button>
+                <button class="primary-btn" id="check3-btn" disabled onclick="checkLevel3()">Check My Picks!</button>
+            </div>
+        </div>
+
+        <!-- FINAL: Victory Screen -->
+        <div class="level-screen" id="final">
+            <div class="final-screen">
+                <div class="trophy">&#127942;</div>
+                <h2 class="congrats-title">You're a Moneyball Master!</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">
+                    You completed all 3 levels and learned how to find hidden value like a real baseball manager!
+                </p>
+
+                <div class="claim-code-box">
+                    <div class="claim-code-label">Your Claim Code:</div>
+                    <div class="claim-code">101-M3-L1-MONEYBALL</div>
+                </div>
+
+                <div class="lesson-summary">
+                    <h3>&#128161; What You Learned</h3>
+                    <ul>
+                        <li><strong>OBP</strong> tells you how often a player gets on base</li>
+                        <li>Popular players with lots of stars aren't always the best deal</li>
+                        <li>Smart managers look at the <strong>data</strong>, not just hype</li>
+                        <li>Finding undervalued players helps you build a winning team on a budget!</li>
+                    </ul>
+                </div>
+
+                <div class="buttons">
+                    <button class="secondary-btn" onclick="restartGame()">Play Again</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        const players = [
-            { id: 'A', obp: 0.310, hr: 25, salary: 13, stars: 4, note: 'Fan favorite!' },
-            { id: 'B', obp: 0.365, hr: 10, salary: 7, stars: 2, note: 'Quiet but smart' },
-            { id: 'C', obp: 0.400, hr: 8, salary: 6, stars: 0, note: 'Gets on base a lot' },
-            { id: 'D', obp: 0.335, hr: 18, salary: 9, stars: 3, note: 'Good all-around' },
-            { id: 'E', obp: 0.345, hr: 15, salary: 11, stars: 2, note: 'Rising star' }
+        // Player data
+        const playersLevel2 = [
+            { id: 'A', obp: 0.310, hr: 25, salary: 13, stars: 4 },
+            { id: 'B', obp: 0.365, hr: 10, salary: 7, stars: 2 },
+            { id: 'C', obp: 0.400, hr: 8, salary: 6, stars: 0 },
+            { id: 'D', obp: 0.335, hr: 18, salary: 9, stars: 3 },
+            { id: 'E', obp: 0.345, hr: 15, salary: 11, stars: 2 }
         ];
 
-        const avatars = ['&#9917;', '&#127936;', '&#129358;', '&#127952;', '&#127941;'];
-        const BUDGET = 25;
-        let selected = [];
+        const playersLevel3 = [
+            { id: 'F', obp: 0.290, hr: 30, salary: 14, stars: 5 },
+            { id: 'G', obp: 0.355, hr: 5, salary: 5, stars: 1 },
+            { id: 'H', obp: 0.380, hr: 6, salary: 7, stars: 0 },
+            { id: 'I', obp: 0.320, hr: 20, salary: 10, stars: 3 },
+            { id: 'J', obp: 0.340, hr: 12, salary: 8, stars: 2 }
+        ];
 
-        function renderPlayers() {
-            const grid = document.getElementById('players-grid');
+        const avatars2 = ['&#9917;', '&#127936;', '&#129358;', '&#127952;', '&#127941;'];
+        const avatars3 = ['&#9918;', '&#129354;', '&#127866;', '&#127947;', '&#128170;'];
+
+        let selected2 = [];
+        let selected3 = [];
+        let currentLevel = 1;
+
+        // Initialize
+        function init() {
+            renderPlayers(2, playersLevel2, avatars2);
+            renderPlayers(3, playersLevel3, avatars3);
+        }
+
+        function renderPlayers(level, players, avatars) {
+            const grid = document.getElementById(`players-grid-${level}`);
             grid.innerHTML = players.map((p, i) => `
-                <div class="player-card" id="card-${p.id}" onclick="pickPlayer('${p.id}')">
+                <div class="player-card" id="card${level}-${p.id}" onclick="pickPlayer(${level}, '${p.id}')">
                     <div class="player-avatar">${avatars[i]}</div>
                     <div class="player-name">Player ${p.id}</div>
                     <div class="player-stat">
@@ -432,46 +678,129 @@
                     </div>
                     <div class="player-stat">
                         <span class="stat-name">Popularity</span>
-                        <span class="stat-val stars">${p.stars > 0 ? '&#11088;'.repeat(p.stars) : 'None'}</span>
+                        <span class="stat-val stars">${p.stars > 0 ? '⭐'.repeat(p.stars) : 'None'}</span>
                     </div>
                     <div class="price-tag">$${p.salary}M</div>
                 </div>
             `).join('');
         }
 
-        function getSpent() {
-            return selected.reduce((sum, id) => sum + players.find(p => p.id === id).salary, 0);
+        // Level 1: Quiz
+        function checkQuiz1(answer) {
+            const options = document.querySelectorAll('#quiz1-options .quiz-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (opt.textContent.includes('B.')) {
+                    opt.classList.add('correct');
+                } else if (opt.textContent.includes(answer + '.') && answer !== 'B') {
+                    opt.classList.add('wrong');
+                }
+            });
+
+            const feedback = document.getElementById('feedback1');
+            if (answer === 'B') {
+                feedback.className = 'feedback-box show success';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#127881;</div>
+                    <strong>Correct!</strong><br>
+                    OBP tells you how often a player reaches base. A player with high OBP helps score more runs!
+                `;
+            } else {
+                feedback.className = 'feedback-box show error';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#128161;</div>
+                    <strong>Not quite!</strong><br>
+                    The answer is B. OBP (On-Base Percentage) shows how often a player gets on base - that's the secret stat!
+                `;
+            }
+
+            document.getElementById('next1-btn').style.display = 'inline-block';
         }
 
-        function pickPlayer(id) {
-            const card = document.getElementById(`card-${id}`);
+        // Level Navigation
+        function goToLevel(level) {
+            document.querySelectorAll('.level-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(level === 4 ? 'final' : `level${level}`).classList.add('active');
+
+            // Update progress bar
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                const line = document.getElementById(`line${i}`);
+
+                if (i < level) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                    step.innerHTML = '✓';
+                    if (line) line.classList.add('completed');
+                } else if (i === level) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                    step.innerHTML = i;
+                } else {
+                    step.classList.remove('active', 'completed');
+                    step.innerHTML = i;
+                }
+            }
+
+            currentLevel = level;
+        }
+
+        // Player Selection
+        function pickPlayer(level, id) {
+            const players = level === 2 ? playersLevel2 : playersLevel3;
+            const selected = level === 2 ? selected2 : selected3;
+            const budget = level === 2 ? 25 : 15;
+
+            const card = document.getElementById(`card${level}-${id}`);
             if (card.classList.contains('disabled')) return;
 
             const player = players.find(p => p.id === id);
 
             if (selected.includes(id)) {
-                selected = selected.filter(x => x !== id);
+                if (level === 2) {
+                    selected2 = selected2.filter(x => x !== id);
+                } else {
+                    selected3 = selected3.filter(x => x !== id);
+                }
                 card.classList.remove('selected');
-            } else if (selected.length < 2 && getSpent() + player.salary <= BUDGET) {
-                selected.push(id);
-                card.classList.add('selected');
+            } else {
+                const currentSelected = level === 2 ? selected2 : selected3;
+                const spent = getSpent(level);
+                if (currentSelected.length < 2 && spent + player.salary <= budget) {
+                    if (level === 2) {
+                        selected2.push(id);
+                    } else {
+                        selected3.push(id);
+                    }
+                    card.classList.add('selected');
+                }
             }
 
-            updateDisplay();
+            updateDisplay(level);
         }
 
-        function updateDisplay() {
-            const spent = getSpent();
-            document.getElementById('spent').textContent = `$${spent}M`;
-            document.getElementById('picked').textContent = `${selected.length} / 2`;
+        function getSpent(level) {
+            const players = level === 2 ? playersLevel2 : playersLevel3;
+            const selected = level === 2 ? selected2 : selected3;
+            return selected.reduce((sum, id) => sum + players.find(p => p.id === id).salary, 0);
+        }
 
-            const spentEl = document.getElementById('spent');
-            spentEl.className = spent > 20 ? 'budget-value money-tight' : 'budget-value money-left';
+        function updateDisplay(level) {
+            const players = level === 2 ? playersLevel2 : playersLevel3;
+            const selected = level === 2 ? selected2 : selected3;
+            const budget = level === 2 ? 25 : 15;
+            const spent = getSpent(level);
+
+            document.getElementById(`spent${level}`).textContent = `$${spent}M`;
+            document.getElementById(`picked${level}`).textContent = `${selected.length} / 2`;
+
+            const spentEl = document.getElementById(`spent${level}`);
+            spentEl.className = spent > budget * 0.8 ? 'budget-value money-tight' : 'budget-value money-left';
 
             players.forEach(p => {
-                const card = document.getElementById(`card-${p.id}`);
+                const card = document.getElementById(`card${level}-${p.id}`);
                 if (!selected.includes(p.id)) {
-                    if (selected.length >= 2 || spent + p.salary > BUDGET) {
+                    if (selected.length >= 2 || spent + p.salary > budget) {
                         card.classList.add('disabled');
                     } else {
                         card.classList.remove('disabled');
@@ -479,76 +808,129 @@
                 }
             });
 
-            document.getElementById('draft-btn').disabled = selected.length !== 2;
+            document.getElementById(`check${level}-btn`).disabled = selected.length !== 2;
         }
 
-        function toggleHint() {
-            document.getElementById('hint-box').classList.toggle('show');
+        function toggleHint(level) {
+            document.getElementById(`hint${level}`).classList.toggle('show');
         }
 
-        function checkAnswer() {
-            const isWinner = selected.includes('B') && selected.includes('C');
-            const hasOneGood = selected.includes('B') || selected.includes('C');
+        // Check Level 2
+        function checkLevel2() {
+            const isCorrect = selected2.includes('B') && selected2.includes('C');
+            const feedback = document.getElementById('feedback2');
 
-            let html = '';
+            if (isCorrect) {
+                feedback.className = 'feedback-box show success';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#127881;</div>
+                    <strong>Perfect!</strong> Players B and C have the best OBP for the lowest price. You saved money AND got great players!
+                `;
+                document.getElementById('check2-btn').style.display = 'none';
 
-            if (isWinner) {
-                html = `
-                    <div class="popup-icon">&#127942;</div>
-                    <h2 class="popup-title win">You Did It!</h2>
-                    <p class="popup-message">Amazing! You found the hidden gems! Players B and C don't have many stars, but they get on base the most for the lowest price. That's smart thinking!</p>
-                    <div class="claim-code-box">
-                        <div class="claim-code-label">Your Claim Code:</div>
-                        <div class="claim-code">101-M3-L1-MONEYBALL</div>
-                    </div>
-                    <div class="lesson-box">
-                        <h3>&#128161; What You Learned</h3>
-                        <p>In Moneyball, the best players aren't always the most popular. By looking at the <strong>data</strong> (OBP), you found players that other teams missed!</p>
-                    </div>
-                    <button class="popup-btn" onclick="closePopup()">Play Again</button>
-                `;
-            } else if (hasOneGood) {
-                html = `
-                    <div class="popup-icon">&#128170;</div>
-                    <h2 class="popup-title close">So Close!</h2>
-                    <p class="popup-message">Good job picking ${selected.includes('B') ? 'Player B' : 'Player C'}! But there's an even better combo. Look for players with HIGH OBP and LOW price!</p>
-                    <div class="lesson-box">
-                        <h3>&#128161; Tip</h3>
-                        <p>Stars and home runs are exciting, but OBP tells you how often a player helps the team. Try again!</p>
-                    </div>
-                    <button class="popup-btn" onclick="closePopup()">Try Again</button>
-                `;
+                setTimeout(() => {
+                    const btn = document.createElement('button');
+                    btn.className = 'primary-btn';
+                    btn.textContent = 'Next Level →';
+                    btn.onclick = () => goToLevel(3);
+                    document.getElementById('level2').querySelector('.buttons').appendChild(btn);
+                }, 500);
             } else {
-                html = `
-                    <div class="popup-icon">&#129300;</div>
-                    <h2 class="popup-title retry">Not Quite!</h2>
-                    <p class="popup-message">You picked the popular players, but are they the best deal? Look at the OBP numbers - who gets on base the most for the cheapest price?</p>
-                    <div class="lesson-box">
-                        <h3>&#128161; Tip</h3>
-                        <p>Don't be fooled by stars! A player with a high OBP and low price is a hidden treasure!</p>
-                    </div>
-                    <button class="popup-btn" onclick="closePopup()">Try Again</button>
+                feedback.className = 'feedback-box show error';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#129300;</div>
+                    <strong>Try again!</strong> Look for the two players with the highest OBP and lowest prices. Stars don't matter!
                 `;
+
+                // Reset selections
+                setTimeout(() => {
+                    selected2 = [];
+                    document.querySelectorAll('[id^="card2-"]').forEach(c => c.classList.remove('selected', 'disabled'));
+                    updateDisplay(2);
+                    feedback.classList.remove('show');
+                }, 2000);
             }
-
-            document.getElementById('popup-content').innerHTML = html;
-            document.getElementById('popup').classList.add('show');
         }
 
-        function closePopup() {
-            document.getElementById('popup').classList.remove('show');
-            resetGame();
+        // Check Level 3
+        function checkLevel3() {
+            // Best picks for $15M budget: G ($5M, 0.355 OBP) + H ($7M, 0.380 OBP) = $12M
+            const isCorrect = selected3.includes('G') && selected3.includes('H');
+            const feedback = document.getElementById('feedback3');
+
+            if (isCorrect) {
+                feedback.className = 'feedback-box show success';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#127942;</div>
+                    <strong>You did it!</strong> Players G and H give you the best OBP for just $12M. You're thinking like a Moneyball pro!
+                `;
+                document.getElementById('check3-btn').style.display = 'none';
+
+                setTimeout(() => {
+                    const btn = document.createElement('button');
+                    btn.className = 'primary-btn';
+                    btn.textContent = 'Get Your Code! →';
+                    btn.onclick = () => goToLevel(4);
+                    document.getElementById('level3').querySelector('.buttons').appendChild(btn);
+                }, 500);
+            } else {
+                feedback.className = 'feedback-box show error';
+                feedback.innerHTML = `
+                    <div class="feedback-icon">&#129300;</div>
+                    <strong>Not quite!</strong> Remember: you only have $15M. Find the best OBP you can afford!
+                `;
+
+                setTimeout(() => {
+                    selected3 = [];
+                    document.querySelectorAll('[id^="card3-"]').forEach(c => c.classList.remove('selected', 'disabled'));
+                    updateDisplay(3);
+                    feedback.classList.remove('show');
+                }, 2000);
+            }
         }
 
-        function resetGame() {
-            selected = [];
+        function restartGame() {
+            selected2 = [];
+            selected3 = [];
+
             document.querySelectorAll('.player-card').forEach(c => c.classList.remove('selected', 'disabled'));
-            document.getElementById('hint-box').classList.remove('show');
-            updateDisplay();
+            document.querySelectorAll('.feedback-box').forEach(f => f.classList.remove('show'));
+            document.querySelectorAll('.hint-box').forEach(h => h.classList.remove('show'));
+
+            document.querySelectorAll('#quiz1-options .quiz-option').forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+                opt.style.pointerEvents = 'auto';
+            });
+
+            document.getElementById('feedback1').classList.remove('show');
+            document.getElementById('next1-btn').style.display = 'none';
+
+            // Reset extra buttons
+            document.querySelectorAll('.buttons .primary-btn').forEach(btn => {
+                if (btn.textContent.includes('Next') || btn.textContent.includes('Get Your')) {
+                    btn.remove();
+                }
+            });
+            document.getElementById('check2-btn').style.display = 'inline-block';
+            document.getElementById('check3-btn').style.display = 'inline-block';
+
+            // Reset progress
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById(`step${i}`);
+                const line = document.getElementById(`line${i}`);
+                step.classList.remove('active', 'completed');
+                step.innerHTML = i;
+                if (line) line.classList.remove('completed');
+            }
+            document.getElementById('step1').classList.add('active');
+
+            updateDisplay(2);
+            updateDisplay(3);
+            goToLevel(1);
         }
 
-        renderPlayers();
-        updateDisplay();
+        // Start game
+        init();
     </script>
 </body>
 </html>
