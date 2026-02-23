@@ -3,934 +3,976 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moneyball Draft Challenge</title>
+    <title>⚾ Moneyball Draft Challenge</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0d1117;
+            --bg2: #161b22;
+            --bg3: #1c2128;
+            --border: #30363d;
+            --text: #e6edf3;
+            --muted: #7d8590;
+            --gold: #f5a623;
+            --gold-dim: rgba(245,166,35,0.15);
+            --green: #3fb950;
+            --green-dark: #238636;
+            --red: #f85149;
+            --blue: #58a6ff;
+            --t: 0.3s ease;
         }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
             min-height: 100vh;
-            padding: 15px;
-            color: white;
+            color: var(--text);
+            overflow-x: hidden;
         }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(245,166,35,0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 100% 100%, rgba(88,166,255,0.04) 0%, transparent 45%);
+            pointer-events: none; z-index: 0;
         }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
 
-        header {
-            text-align: center;
-            margin-bottom: 20px;
+        /* ── HEADER ── */
+        header { text-align: center; padding: 28px 0 16px; }
+        .header-ball {
+            font-size: 2.8rem; display: block; margin-bottom: 10px;
+            animation: spin 10s linear infinite;
         }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         h1 {
-            font-size: 2rem;
-            margin-bottom: 8px;
+            font-size: clamp(1.9rem, 5vw, 2.8rem);
+            font-weight: 800; letter-spacing: -0.5px;
+            background: linear-gradient(130deg, #fff 0%, var(--gold) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
+        .header-sub { color: var(--muted); font-size: 0.92rem; margin-top: 5px; }
 
-        .baseball {
-            font-size: 2.5rem;
-            animation: bounce 1s infinite;
+        /* ── PROGRESS ── */
+        .progress-wrap {
+            margin: 22px 0;
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+            padding: 16px 24px;
         }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
+        .progress-track { display: flex; align-items: center; justify-content: center; }
+        .p-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; max-width: 130px; }
+        .p-circle {
+            width: 38px; height: 38px; border-radius: 50%;
+            border: 2px solid var(--border); background: var(--bg3);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.95rem; transition: all var(--t);
         }
+        .p-circle.active  { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); box-shadow: 0 0 14px rgba(245,166,35,0.25); }
+        .p-circle.done    { border-color: var(--green); background: var(--green-dark); color: #fff; }
+        .p-label { font-size: 0.7rem; color: var(--muted); text-align: center; line-height: 1.3; transition: color var(--t); }
+        .p-label.active { color: var(--gold); }
+        .p-label.done   { color: var(--green); }
+        .p-line { flex: 1; height: 2px; background: var(--border); margin: 0 4px 20px; transition: background var(--t); }
+        .p-line.done { background: var(--green); }
 
-        /* Progress Bar */
-        .progress-bar {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
+        /* ── SCREENS ── */
+        .screen { display: none; opacity: 0; transform: translateY(14px); transition: opacity .35s ease, transform .35s ease; }
+        .screen.active  { display: block; }
+        .screen.visible { opacity: 1; transform: translateY(0); }
 
-        .progress-step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .step-circle {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .step-circle.active {
-            background: #fbbf24;
-            color: #1a1a1a;
-        }
-
-        .step-circle.completed {
-            background: #22c55e;
-        }
-
-        .step-line {
-            width: 40px;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-        }
-
-        .step-line.completed {
-            background: #22c55e;
-        }
-
-        /* Level Screens */
-        .level-screen {
-            display: none;
-        }
-
-        .level-screen.active {
-            display: block;
-        }
-
+        /* ── MISSION BOX ── */
         .mission-box {
-            background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-            line-height: 1.5;
+            background: var(--bg2); border: 1px solid var(--border);
+            border-left: 4px solid var(--gold); border-radius: 12px;
+            padding: 16px 20px; margin-bottom: 20px;
         }
-
-        .level-badge {
-            background: #fbbf24;
-            color: #1a1a1a;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-bottom: 10px;
+        .level-tag {
+            display: inline-block; background: var(--gold); color: #000;
+            font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
         }
+        .mission-box p { font-size: 1rem; line-height: 1.6; }
+        .hl { color: var(--gold); font-weight: 700; }
 
-        .highlight {
-            background: #fbbf24;
-            color: #1a1a1a;
-            padding: 2px 8px;
-            border-radius: 5px;
-            font-weight: bold;
+        /* ── QUIZ ── */
+        .quiz-q {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+            padding: 20px 24px; font-size: 1.1rem; font-weight: 600;
+            margin-bottom: 14px; line-height: 1.55;
         }
-
-        /* Quiz Styles */
-        .quiz-question {
-            background: white;
-            color: #333;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            text-align: center;
+        .quiz-options { display: grid; gap: 10px; }
+        .quiz-opt {
+            background: var(--bg2); border: 2px solid var(--border); border-radius: 10px;
+            padding: 13px 16px; font-size: 0.97rem; cursor: pointer;
+            transition: all 0.18s; display: flex; align-items: center; gap: 12px;
         }
-
-        .quiz-options {
-            display: grid;
-            gap: 12px;
+        .opt-letter {
+            width: 30px; height: 30px; border-radius: 50%; background: var(--bg3);
+            border: 1.5px solid var(--border); display: flex; align-items: center;
+            justify-content: center; font-weight: 700; font-size: 0.88rem; flex-shrink: 0;
+            transition: all 0.18s;
         }
+        .quiz-opt:hover:not(.locked) { border-color: var(--gold); background: var(--gold-dim); }
+        .quiz-opt:hover:not(.locked) .opt-letter { border-color: var(--gold); color: var(--gold); }
+        .quiz-opt.correct { border-color: var(--green); background: rgba(63,185,80,0.08); }
+        .quiz-opt.correct .opt-letter { background: var(--green); border-color: var(--green); color: #000; }
+        .quiz-opt.wrong   { border-color: var(--red);   background: rgba(248,81,73,0.08); }
+        .quiz-opt.wrong .opt-letter   { background: var(--red);   border-color: var(--red);   color: #fff; }
+        .quiz-opt.locked  { cursor: default; }
 
-        .quiz-option {
-            background: white;
-            color: #333;
-            border: 3px solid transparent;
-            border-radius: 12px;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
+        /* ── BUDGET ── */
+        .budget-wrap {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 20px; margin-bottom: 18px;
         }
+        .budget-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .budget-lbl { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .budget-picks { font-size: 0.88rem; color: var(--muted); }
+        .budget-picks b { color: var(--text); }
+        .budget-track { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .budget-fill  { height: 100%; border-radius: 4px; background: var(--green); transition: width .4s ease, background .4s ease; }
+        .budget-fill.tight { background: var(--gold); }
+        .budget-fill.over  { background: var(--red); }
+        .budget-nums { display: flex; justify-content: space-between; font-size: 0.88rem; }
+        .budget-spent { font-weight: 700; font-size: 1.05rem; }
+        .budget-left  { color: var(--muted); }
 
-        .quiz-option:hover {
-            border-color: #2563eb;
-            transform: scale(1.02);
+        /* ── SORT ── */
+        .sort-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .sort-lbl { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sort-btn {
+            background: var(--bg2); border: 1px solid var(--border); color: var(--muted);
+            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all .15s;
         }
+        .sort-btn:hover  { border-color: var(--gold); color: var(--gold); }
+        .sort-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold); font-weight: 600; }
 
-        .quiz-option.selected {
-            border-color: #2563eb;
-            background: #dbeafe;
-        }
-
-        .quiz-option.correct {
-            border-color: #22c55e;
-            background: #dcfce7;
-        }
-
-        .quiz-option.wrong {
-            border-color: #ef4444;
-            background: #fee2e2;
-        }
-
-        /* Draft Game Styles */
-        .budget-bar {
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .budget-item {
-            text-align: center;
-        }
-
-        .budget-label {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-
-        .budget-value {
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
-
-        .money-left { color: #4ade80; }
-        .money-tight { color: #fbbf24; }
-
+        /* ── PLAYER GRID ── */
         .players-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 12px; margin-bottom: 18px;
         }
-
         .player-card {
-            background: white;
-            border-radius: 15px;
-            padding: 12px;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            border: 4px solid transparent;
+            background: var(--bg2); border: 2px solid var(--border); border-radius: 14px;
+            padding: 13px 11px; cursor: pointer; transition: all 0.2s ease;
+            position: relative; overflow: hidden; user-select: none;
         }
-
-        .player-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        .player-card:hover:not(.disabled) {
+            border-color: var(--gold); transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
         }
-
         .player-card.selected {
-            border-color: #22c55e;
-            background: #dcfce7;
+            border-color: var(--green); background: rgba(63,185,80,0.07);
+            box-shadow: 0 0 0 3px rgba(63,185,80,0.2), 0 8px 20px rgba(0,0,0,0.25);
         }
-
-        .player-card.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
+        .player-card.disabled { opacity: 0.32; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 9px; }
+        .p-avatar { font-size: 1.9rem; line-height: 1; }
+        .p-name { font-size: 1.3rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+        .sel-check {
+            display: none; position: absolute; top: 8px; right: 8px;
+            width: 20px; height: 20px; background: var(--green); border-radius: 50%;
+            align-items: center; justify-content: center; font-size: 0.7rem; color: #000; font-weight: 800;
         }
+        .player-card.selected .sel-check { display: flex; }
 
-        .player-avatar {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
+        /* OBP bar */
+        .obp-wrap { margin: 7px 0 9px; }
+        .obp-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+        .obp-lbl { font-size: 0.67rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+        .obp-val { font-size: 1.05rem; font-weight: 800; }
+        .obp-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+        .obp-fill  { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+        /* stats */
+        .stats-row { display: flex; gap: 7px; margin-bottom: 8px; }
+        .stat-pill { flex: 1; background: var(--bg3); border-radius: 6px; padding: 4px 5px; text-align: center; }
+        .sp-lbl { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; display: block; }
+        .sp-val { font-size: 0.88rem; font-weight: 700; }
+        .salary-tag {
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+            padding: 6px; margin-top: 2px;
         }
+        .sal-amt { font-size: 1rem; font-weight: 800; }
+        .sal-unit { font-size: 0.7rem; color: var(--muted); margin-left: 2px; }
 
-        .player-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #1e40af;
-            margin-bottom: 8px;
-        }
-
-        .player-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .player-stat:last-child {
-            border-bottom: none;
-        }
-
-        .stat-name {
-            color: #666;
-        }
-
-        .stat-val {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .stars {
-            color: #f59e0b;
-        }
-
-        .price-tag {
-            background: #ef4444;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            display: inline-block;
-        }
-
-        /* Buttons */
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .primary-btn {
-            background: #22c55e;
-            color: white;
-        }
-
-        .primary-btn:hover:not(:disabled) {
-            background: #16a34a;
-            transform: scale(1.05);
-        }
-
-        .primary-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
-
-        .secondary-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-        }
-
-        .secondary-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .hint-btn {
-            background: #fbbf24;
-            color: #1a1a1a;
-        }
-
-        .hint-btn:hover {
-            background: #f59e0b;
-        }
-
+        /* ── HINTS ── */
+        .hint-area { margin: 10px 0; }
         .hint-box {
-            display: none;
-            background: #fef3c7;
-            color: #92400e;
-            border-radius: 15px;
-            padding: 15px 20px;
-            margin: 15px 0;
-            text-align: center;
-            font-size: 1rem;
+            display: none; margin-top: 8px;
+            background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.28);
+            border-radius: 10px; padding: 11px 15px; font-size: 0.92rem; color: var(--gold); line-height: 1.5;
         }
+        .hint-box.show { display: block; }
+        .hint-step { font-size: 0.7rem; color: rgba(245,166,35,0.55); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
 
-        .hint-box.show {
-            display: block;
-        }
-
-        /* Feedback Box */
+        /* ── FEEDBACK ── */
         .feedback-box {
-            display: none;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
+            display: none; border-radius: 12px; padding: 15px 18px; margin: 14px 0;
+        }
+        .feedback-box.show { display: block; }
+        .feedback-box.success { background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.38); color: var(--green); }
+        .feedback-box.error   { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.38); color: var(--red); }
+        .fb-icon  { font-size: 1.7rem; margin-bottom: 5px; }
+        .fb-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 3px; }
+        .fb-body  { font-size: 0.88rem; line-height: 1.5; opacity: 0.88; }
+
+        /* ── EFFICIENCY SCORE ── */
+        .eff-box {
+            display: none; background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px 20px; margin: 12px 0; text-align: center;
+        }
+        .eff-box.show { display: block; }
+        .eff-lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .eff-score { font-size: 2.3rem; font-weight: 800; color: var(--gold); }
+        .eff-sub   { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+        /* ── BREAKDOWN TABLE ── */
+        .breakdown {
+            display: none; margin: 12px 0;
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+        }
+        .breakdown.show { display: block; }
+        .bd-title { padding: 10px 16px; background: var(--bg3); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+        .bd-head, .bd-row {
+            display: grid; grid-template-columns: 36px 1fr 62px 62px 90px;
+            gap: 8px; padding: 9px 16px; align-items: center; font-size: 0.88rem;
+        }
+        .bd-head { background: var(--bg3); color: var(--muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+        .bd-row { border-top: 1px solid var(--border); transition: background .15s; }
+        .bd-row:hover { background: var(--bg3); }
+        .bd-row.your-pick { background: rgba(63,185,80,0.05); }
+        .bd-row.optimal   { border-left: 3px solid var(--gold); }
+        .val-bar { display: flex; align-items: center; gap: 6px; }
+        .val-num { font-size: 0.78rem; font-weight: 700; min-width: 28px; }
+        .val-track { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+        .val-fill  { height: 100%; border-radius: 3px; background: var(--gold); }
+
+        /* ── ACHIEVEMENTS ── */
+        .ach-strip { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+        .ach {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 20px;
+            padding: 5px 12px; font-size: 0.8rem; color: var(--muted);
+            opacity: 0.38; transition: all .4s ease;
+        }
+        .ach.earned {
+            opacity: 1; border-color: var(--gold); color: var(--gold);
+            background: var(--gold-dim); animation: pop .45s cubic-bezier(.175,.885,.32,1.275);
+        }
+        @keyframes pop { 0%{transform:scale(0.7);opacity:0} 100%{transform:scale(1);opacity:1} }
+
+        /* ── BUTTONS ── */
+        .buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        button { padding: 11px 24px; font-size: 0.93rem; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: all .18s ease; }
+        .btn-primary { background: linear-gradient(135deg, var(--green), var(--green-dark)); color: #000; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(63,185,80,0.32); }
+        .btn-primary:disabled { background: var(--bg3); color: var(--muted); cursor: not-allowed; border: 1px solid var(--border); }
+        .btn-secondary { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--text); }
+        .btn-hint { background: var(--gold-dim); color: var(--gold); border: 1.5px solid rgba(245,166,35,0.35); }
+        .btn-hint:hover { background: rgba(245,166,35,0.22); }
+
+        /* ── FINAL SCREEN ── */
+        .final-wrap { text-align: center; padding: 24px 0; }
+        .trophy { font-size: 5rem; display: block; margin-bottom: 16px; animation: tbounce .7s ease infinite alternate; }
+        @keyframes tbounce { from{transform:translateY(0) rotate(-4deg)} to{transform:translateY(-12px) rotate(4deg)} }
+        .final-title {
+            font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800;
+            background: linear-gradient(130deg, var(--gold), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 6px;
+        }
+        .final-sub { color: var(--muted); font-size: 0.97rem; margin-bottom: 28px; }
+        .code-box {
+            background: linear-gradient(135deg, var(--green-dark), #1a7f37);
+            border: 1px solid var(--green); border-radius: 16px;
+            padding: 22px; margin: 0 auto 22px; max-width: 420px;
+        }
+        .code-lbl { font-size: 0.8rem; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .code-val {
+            font-family: 'Courier New', monospace; font-size: 1.55rem; font-weight: 700;
+            color: #fff; background: rgba(0,0,0,0.22); padding: 10px 20px;
+            border-radius: 10px; letter-spacing: 3px; display: inline-block; margin-bottom: 12px;
+        }
+        .copy-btn {
+            background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.28);
+            padding: 6px 16px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: background .2s;
+        }
+        .copy-btn:hover { background: rgba(255,255,255,0.24); }
+        .summary-box {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+            padding: 20px 24px; margin: 0 auto 22px; max-width: 520px; text-align: left;
+        }
+        .summary-box h3 { color: var(--gold); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; text-align: center; }
+        .sum-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.92rem; line-height: 1.5; }
+        .sum-item:last-child { border-bottom: none; }
+        .sum-check { color: var(--green); font-weight: 700; flex-shrink: 0; }
+        .final-ach { margin: 0 auto 20px; max-width: 460px; }
+        .final-ach h3 { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+        .final-ach-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .final-ach-badge {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--gold-dim); border: 1px solid rgba(245,166,35,0.35);
+            border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; color: var(--gold);
         }
 
-        .feedback-box.show {
-            display: block;
-        }
+        /* ── CONFETTI ── */
+        #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
 
-        .feedback-box.success {
-            background: #dcfce7;
-            color: #166534;
-            border: 2px solid #22c55e;
+        /* ── RESPONSIVE ── */
+        @media (max-width: 560px) {
+            .players-grid { grid-template-columns: repeat(2, 1fr); }
+            .bd-head, .bd-row { grid-template-columns: 28px 1fr 52px 52px 70px; font-size: 0.77rem; padding: 8px 10px; }
         }
-
-        .feedback-box.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 2px solid #ef4444;
-        }
-
-        .feedback-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* Final Screen */
-        .final-screen {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .trophy {
-            font-size: 5rem;
-            margin-bottom: 15px;
-            animation: bounce 1s infinite;
-        }
-
-        .congrats-title {
-            font-size: 2rem;
-            margin-bottom: 15px;
-        }
-
-        .claim-code-box {
-            background: linear-gradient(145deg, #22c55e, #16a34a);
-            color: white;
-            padding: 25px;
-            border-radius: 20px;
-            margin: 25px 0;
-        }
-
-        .claim-code-label {
-            font-size: 1rem;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .claim-code {
-            font-size: 1.8rem;
-            font-weight: bold;
-            background: white;
-            color: #22c55e;
-            padding: 12px 25px;
-            border-radius: 12px;
-            letter-spacing: 3px;
-            font-family: monospace;
-            display: inline-block;
-        }
-
-        .lesson-summary {
-            background: rgba(255,255,255,0.15);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .lesson-summary h3 {
-            color: #fbbf24;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .lesson-summary ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .lesson-summary li {
-            padding: 8px 0;
-            padding-left: 30px;
-            position: relative;
-        }
-
-        .lesson-summary li::before {
-            content: "✓";
-            position: absolute;
-            left: 5px;
-            color: #4ade80;
-            font-weight: bold;
-        }
-
-        @media (max-width: 500px) {
-            h1 { font-size: 1.5rem; }
-            .budget-value { font-size: 1.3rem; }
-            .player-card { padding: 10px; }
-            .player-name { font-size: 1rem; }
-            .step-line { width: 20px; }
+        @media (max-width: 360px) {
+            .players-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="baseball">&#9918;</div>
-            <h1>Moneyball Draft Challenge</h1>
-        </header>
+<canvas id="confetti-canvas"></canvas>
+<div class="container">
 
-        <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress-step">
-                <div class="step-circle active" id="step1">1</div>
-            </div>
-            <div class="step-line" id="line1"></div>
-            <div class="progress-step">
-                <div class="step-circle" id="step2">2</div>
-            </div>
-            <div class="step-line" id="line2"></div>
-            <div class="progress-step">
-                <div class="step-circle" id="step3">3</div>
-            </div>
+    <header>
+        <span class="header-ball">⚾</span>
+        <h1>Moneyball Draft Challenge</h1>
+        <p class="header-sub">Learn to build a winning team on a budget</p>
+    </header>
+
+    <div class="progress-wrap">
+        <div class="progress-track" id="progress-track"></div>
+    </div>
+
+    <!-- SCREEN 1: Quiz -->
+    <div class="screen" id="screen-1">
+        <div class="mission-box">
+            <div class="level-tag">Level 1 · Learn the Secret</div>
+            <p>Before you draft, you need to know the <span class="hl">secret stat</span> that smart managers use to find hidden value!</p>
         </div>
+        <div class="quiz-q">In baseball, what does <strong>OBP</strong> (On-Base Percentage) tell you?</div>
+        <div class="quiz-options" id="quiz-options">
+            <div class="quiz-opt" data-ans="A"><div class="opt-letter">A</div>How fast a player can run</div>
+            <div class="quiz-opt" data-ans="B"><div class="opt-letter">B</div>How often a player gets on base (hits, walks, and more)</div>
+            <div class="quiz-opt" data-ans="C"><div class="opt-letter">C</div>How many home runs a player hits</div>
+            <div class="quiz-opt" data-ans="D"><div class="opt-letter">D</div>How popular a player is with fans</div>
+        </div>
+        <div class="feedback-box" id="feedback-1"></div>
+        <div class="buttons">
+            <button class="btn-primary" id="next-1" style="display:none" onclick="goToLevel(2)">Start Drafting →</button>
+        </div>
+    </div>
 
-        <!-- LEVEL 1: Learn about OBP -->
-        <div class="level-screen active" id="level1">
-            <div class="mission-box">
-                <div class="level-badge">Level 1: Learn the Secret</div><br>
-                Before you draft, you need to know the <strong>secret stat</strong> that smart managers use!
+    <!-- SCREEN 2: Draft -->
+    <div class="screen" id="screen-2">
+        <div class="mission-box">
+            <div class="level-tag">Level 2 · Your First Draft</div>
+            <p>Pick <span class="hl">2 players</span> for your team with only <span class="hl">$25M</span>. Find the best OBP for the lowest price!</p>
+        </div>
+        <div class="budget-wrap" id="budget-2"></div>
+        <div class="sort-bar">
+            <span class="sort-lbl">Sort by:</span>
+            <button class="sort-btn active" id="sort-2-obp"    onclick="sortPlayers(2,'obp')">OBP ↓</button>
+            <button class="sort-btn"        id="sort-2-salary" onclick="sortPlayers(2,'salary')">Salary ↑</button>
+            <button class="sort-btn"        id="sort-2-stars"  onclick="sortPlayers(2,'stars')">Popularity ↓</button>
+        </div>
+        <div class="players-grid" id="grid-2"></div>
+        <div class="hint-area">
+            <button class="btn-hint" id="hint-btn-2" onclick="showNextHint(2)">💡 Need a Hint?</button>
+            <div class="hint-box" id="hint-2"></div>
+        </div>
+        <div class="feedback-box" id="feedback-2"></div>
+        <div class="eff-box" id="eff-2"></div>
+        <div class="breakdown" id="breakdown-2"></div>
+        <div class="buttons" id="btns-2">
+            <button class="btn-primary" id="check-2" disabled onclick="checkLevel(2)">Check My Picks ✓</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: Draft -->
+    <div class="screen" id="screen-3">
+        <div class="mission-box">
+            <div class="level-tag">Level 3 · The Real Challenge</div>
+            <p>Budget cut! Pick <span class="hl">2 players</span> with only <span class="hl">$15M</span>. Stars don't matter — data does!</p>
+        </div>
+        <div class="budget-wrap" id="budget-3"></div>
+        <div class="sort-bar">
+            <span class="sort-lbl">Sort by:</span>
+            <button class="sort-btn active" id="sort-3-obp"    onclick="sortPlayers(3,'obp')">OBP ↓</button>
+            <button class="sort-btn"        id="sort-3-salary" onclick="sortPlayers(3,'salary')">Salary ↑</button>
+            <button class="sort-btn"        id="sort-3-stars"  onclick="sortPlayers(3,'stars')">Popularity ↓</button>
+        </div>
+        <div class="players-grid" id="grid-3"></div>
+        <div class="hint-area">
+            <button class="btn-hint" id="hint-btn-3" onclick="showNextHint(3)">💡 Need a Hint?</button>
+            <div class="hint-box" id="hint-3"></div>
+        </div>
+        <div class="feedback-box" id="feedback-3"></div>
+        <div class="eff-box" id="eff-3"></div>
+        <div class="breakdown" id="breakdown-3"></div>
+        <div class="buttons" id="btns-3">
+            <button class="btn-primary" id="check-3" disabled onclick="checkLevel(3)">Check My Picks ✓</button>
+        </div>
+    </div>
+
+    <!-- SCREEN: Final -->
+    <div class="screen" id="screen-final">
+        <div class="final-wrap">
+            <span class="trophy">🏆</span>
+            <h2 class="final-title">You're a Moneyball Master!</h2>
+            <p class="final-sub">You completed all 3 levels and learned to find hidden value like a real GM!</p>
+            <div class="code-box">
+                <div class="code-lbl">Your Completion Code</div>
+                <div class="code-val">101-M3-L1-MONEYBALL</div><br>
+                <button class="copy-btn" onclick="copyCode()">📋 Copy Code</button>
             </div>
-
-            <div class="quiz-question">
-                In baseball, what does <strong>OBP</strong> (On-Base Percentage) tell you?
+            <div class="final-ach">
+                <h3>🏅 Achievements Earned</h3>
+                <div class="final-ach-grid" id="final-ach-grid"></div>
             </div>
-
-            <div class="quiz-options" id="quiz1-options">
-                <div class="quiz-option" onclick="checkQuiz1('A')">
-                    <strong>A.</strong> How fast a player can run
-                </div>
-                <div class="quiz-option" onclick="checkQuiz1('B')">
-                    <strong>B.</strong> How often a player gets on base (hits, walks, etc.)
-                </div>
-                <div class="quiz-option" onclick="checkQuiz1('C')">
-                    <strong>C.</strong> How many home runs a player hits
-                </div>
-                <div class="quiz-option" onclick="checkQuiz1('D')">
-                    <strong>D.</strong> How popular a player is with fans
-                </div>
+            <div class="summary-box">
+                <h3>📖 What You Learned</h3>
+                <div class="sum-item"><span class="sum-check">✓</span><span><strong>OBP</strong> tells you how often a player gets on base — the real key to scoring runs</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span>Popular high-star players aren't always the best value</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span>Smart managers use <strong>data and analytics</strong>, not hype</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span>Finding undervalued players = building a <strong>winning team on a budget!</strong></span></div>
             </div>
-
-            <div class="feedback-box" id="feedback1"></div>
-
             <div class="buttons">
-                <button class="primary-btn" id="next1-btn" style="display:none;" onclick="goToLevel(2)">Next Level →</button>
-            </div>
-        </div>
-
-        <!-- LEVEL 2: First Draft -->
-        <div class="level-screen" id="level2">
-            <div class="mission-box">
-                <div class="level-badge">Level 2: Your First Draft</div><br>
-                Pick <span class="highlight">2 players</span> for your team with only <span class="highlight">$25 million</span>.<br>
-                Remember: Look for players with HIGH OBP and LOW price!
-            </div>
-
-            <div class="budget-bar">
-                <div class="budget-item">
-                    <div class="budget-label">Budget</div>
-                    <div class="budget-value">$25M</div>
-                </div>
-                <div class="budget-item">
-                    <div class="budget-label">Spent</div>
-                    <div class="budget-value money-left" id="spent2">$0M</div>
-                </div>
-                <div class="budget-item">
-                    <div class="budget-label">Picked</div>
-                    <div class="budget-value" id="picked2">0 / 2</div>
-                </div>
-            </div>
-
-            <div class="players-grid" id="players-grid-2"></div>
-
-            <div class="hint-box" id="hint2">
-                <strong>Hint:</strong> Player C has the highest OBP (0.400) and costs only $6M. That's a great deal!
-            </div>
-
-            <div class="feedback-box" id="feedback2"></div>
-
-            <div class="buttons">
-                <button class="hint-btn" onclick="toggleHint(2)">Need a Hint?</button>
-                <button class="primary-btn" id="check2-btn" disabled onclick="checkLevel2()">Check My Picks!</button>
-            </div>
-        </div>
-
-        <!-- LEVEL 3: Harder Draft -->
-        <div class="level-screen" id="level3">
-            <div class="mission-box">
-                <div class="level-badge">Level 3: The Real Challenge</div><br>
-                Now it's tougher! Pick <span class="highlight">2 players</span> with only <span class="highlight">$15 million</span>.<br>
-                Can you still find the best value?
-            </div>
-
-            <div class="budget-bar">
-                <div class="budget-item">
-                    <div class="budget-label">Budget</div>
-                    <div class="budget-value">$15M</div>
-                </div>
-                <div class="budget-item">
-                    <div class="budget-label">Spent</div>
-                    <div class="budget-value money-left" id="spent3">$0M</div>
-                </div>
-                <div class="budget-item">
-                    <div class="budget-label">Picked</div>
-                    <div class="budget-value" id="picked3">0 / 2</div>
-                </div>
-            </div>
-
-            <div class="players-grid" id="players-grid-3"></div>
-
-            <div class="hint-box" id="hint3">
-                <strong>Hint:</strong> With only $15M, you can't afford the expensive stars. Which two cheaper players have the best OBP?
-            </div>
-
-            <div class="feedback-box" id="feedback3"></div>
-
-            <div class="buttons">
-                <button class="hint-btn" onclick="toggleHint(3)">Need a Hint?</button>
-                <button class="primary-btn" id="check3-btn" disabled onclick="checkLevel3()">Check My Picks!</button>
-            </div>
-        </div>
-
-        <!-- FINAL: Victory Screen -->
-        <div class="level-screen" id="final">
-            <div class="final-screen">
-                <div class="trophy">&#127942;</div>
-                <h2 class="congrats-title">You're a Moneyball Master!</h2>
-                <p style="font-size: 1.1rem; margin-bottom: 20px;">
-                    You completed all 3 levels and learned how to find hidden value like a real baseball manager!
-                </p>
-
-                <div class="claim-code-box">
-                    <div class="claim-code-label">Your Claim Code:</div>
-                    <div class="claim-code">101-M3-L1-MONEYBALL</div>
-                </div>
-
-                <div class="lesson-summary">
-                    <h3>&#128161; What You Learned</h3>
-                    <ul>
-                        <li><strong>OBP</strong> tells you how often a player gets on base</li>
-                        <li>Popular players with lots of stars aren't always the best deal</li>
-                        <li>Smart managers look at the <strong>data</strong>, not just hype</li>
-                        <li>Finding undervalued players helps you build a winning team on a budget!</li>
-                    </ul>
-                </div>
-
-                <div class="buttons">
-                    <button class="secondary-btn" onclick="restartGame()">Play Again</button>
-                </div>
+                <button class="btn-secondary" onclick="restartGame()">↺ Play Again</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Player data
-        const playersLevel2 = [
-            { id: 'A', obp: 0.310, hr: 25, salary: 13, stars: 4 },
-            { id: 'B', obp: 0.365, hr: 10, salary: 7, stars: 2 },
-            { id: 'C', obp: 0.400, hr: 8, salary: 6, stars: 0 },
-            { id: 'D', obp: 0.335, hr: 18, salary: 9, stars: 3 },
-            { id: 'E', obp: 0.345, hr: 15, salary: 11, stars: 2 }
-        ];
+</div><!-- /container -->
 
-        const playersLevel3 = [
-            { id: 'F', obp: 0.290, hr: 30, salary: 14, stars: 5 },
-            { id: 'G', obp: 0.355, hr: 5, salary: 5, stars: 1 },
-            { id: 'H', obp: 0.380, hr: 6, salary: 7, stars: 0 },
-            { id: 'I', obp: 0.320, hr: 20, salary: 10, stars: 3 },
-            { id: 'J', obp: 0.340, hr: 12, salary: 8, stars: 2 }
-        ];
+<script>
+// ─── GAME DATA ────────────────────────────────────────────────────────────────
+const LEVELS = {
+    2: {
+        budget: 25, picks: 2,
+        optimal: ['B', 'C'],
+        hints: [
+            { step: 'Hint 1 of 2', text: 'Try sorting by OBP — which players get on base most often for the lowest price?' },
+            { step: 'Hint 2 of 2', text: 'Player C has the highest OBP (0.400) and costs only $6M. That\'s the best value deal on the board!' }
+        ],
+        players: [
+            { id:'A', emoji:'⚾', obp:0.310, hr:25, salary:13, stars:4 },
+            { id:'B', emoji:'🏃', obp:0.365, hr:10, salary:7,  stars:2 },
+            { id:'C', emoji:'🎯', obp:0.400, hr:8,  salary:6,  stars:0 },
+            { id:'D', emoji:'💪', obp:0.335, hr:18, salary:9,  stars:3 },
+            { id:'E', emoji:'🌟', obp:0.345, hr:15, salary:11, stars:2 }
+        ]
+    },
+    3: {
+        budget: 15, picks: 2,
+        optimal: ['G', 'H'],
+        hints: [
+            { step: 'Hint 1 of 2', text: 'With only $15M, you can\'t afford the big stars. Try sorting by Salary first to see what\'s affordable.' },
+            { step: 'Hint 2 of 2', text: 'Players G and H together cost only $12M and have great OBP. That\'s the Moneyball move!' }
+        ],
+        players: [
+            { id:'F', emoji:'⭐', obp:0.290, hr:30, salary:14, stars:5 },
+            { id:'G', emoji:'🎯', obp:0.355, hr:5,  salary:5,  stars:1 },
+            { id:'H', emoji:'🏃', obp:0.380, hr:6,  salary:7,  stars:0 },
+            { id:'I', emoji:'💪', obp:0.320, hr:20, salary:10, stars:3 },
+            { id:'J', emoji:'🌟', obp:0.340, hr:12, salary:8,  stars:2 }
+        ]
+    }
+};
 
-        const avatars2 = ['&#9917;', '&#127936;', '&#129358;', '&#127952;', '&#127941;'];
-        const avatars3 = ['&#9918;', '&#129354;', '&#127866;', '&#127947;', '&#128170;'];
+const PROGRESS_LABELS = ['Learn the Secret', 'First Draft', 'Real Challenge'];
 
-        let selected2 = [];
-        let selected3 = [];
-        let currentLevel = 1;
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const state = {
+    currentLevel: 1,
+    sortMode: { 2: 'obp', 3: 'obp' },
+    levels: {
+        2: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        3: { selected: [], hintsShown: 0, attempts: 0, completed: false }
+    },
+    achievements: { firstTry: true, noHints: true }
+};
 
-        // Initialize
-        function init() {
-            renderPlayers(2, playersLevel2, avatars2);
-            renderPlayers(3, playersLevel3, avatars3);
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+    renderProgress();
+    renderPlayers(2);
+    renderPlayers(3);
+    renderBudget(2);
+    renderBudget(3);
+
+    // Quiz click handlers
+    document.querySelectorAll('.quiz-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+            if (opt.classList.contains('locked')) return;
+            checkQuiz(opt.dataset.ans);
+        });
+    });
+
+    // Show first screen
+    const s = document.getElementById('screen-1');
+    s.classList.add('active');
+    requestAnimationFrame(() => requestAnimationFrame(() => s.classList.add('visible')));
+}
+
+// ─── PROGRESS BAR ─────────────────────────────────────────────────────────────
+function renderProgress() {
+    const track = document.getElementById('progress-track');
+    const lvl = state.currentLevel;
+    let html = '';
+    for (let i = 1; i <= 3; i++) {
+        const done   = (i < lvl) || (lvl > 3);
+        const active = (i === lvl) && (lvl <= 3);
+        const cc = done ? 'done' : active ? 'active' : '';
+        html += `<div class="p-node">
+            <div class="p-circle ${cc}">${done ? '✓' : i}</div>
+            <div class="p-label ${cc}">${PROGRESS_LABELS[i-1]}</div>
+        </div>`;
+        if (i < 3) {
+            html += `<div class="p-line ${done ? 'done' : ''}"></div>`;
         }
+    }
+    track.innerHTML = html;
+}
 
-        function renderPlayers(level, players, avatars) {
-            const grid = document.getElementById(`players-grid-${level}`);
-            grid.innerHTML = players.map((p, i) => `
-                <div class="player-card" id="card${level}-${p.id}" onclick="pickPlayer(${level}, '${p.id}')">
-                    <div class="player-avatar">${avatars[i]}</div>
-                    <div class="player-name">Player ${p.id}</div>
-                    <div class="player-stat">
-                        <span class="stat-name">OBP</span>
-                        <span class="stat-val">${p.obp.toFixed(3)}</span>
-                    </div>
-                    <div class="player-stat">
-                        <span class="stat-name">Home Runs</span>
-                        <span class="stat-val">${p.hr}</span>
-                    </div>
-                    <div class="player-stat">
-                        <span class="stat-name">Popularity</span>
-                        <span class="stat-val stars">${p.stars > 0 ? '⭐'.repeat(p.stars) : 'None'}</span>
-                    </div>
-                    <div class="price-tag">$${p.salary}M</div>
+// ─── OBP COLOR ────────────────────────────────────────────────────────────────
+function obpColor(obp) {
+    // 0.280 → red, 0.380+ → green
+    const t = Math.max(0, Math.min(1, (obp - 0.280) / 0.120));
+    const r = Math.round(248 - t * (248 - 63));
+    const g = Math.round(81  + t * (185 - 81));
+    const b = Math.round(73  - t * (73 - 50));
+    return `rgb(${r},${g},${b})`;
+}
+function obpWidth(obp) {
+    return Math.round(Math.max(5, Math.min(100, (obp - 0.240) / 0.200 * 100)));
+}
+
+// ─── RENDER PLAYERS ───────────────────────────────────────────────────────────
+function sortedPlayers(level) {
+    const players = [...LEVELS[level].players];
+    const mode = state.sortMode[level];
+    if (mode === 'obp')    return players.sort((a,b) => b.obp - a.obp);
+    if (mode === 'salary') return players.sort((a,b) => a.salary - b.salary);
+    if (mode === 'stars')  return players.sort((a,b) => b.stars - a.stars);
+    return players;
+}
+
+function renderPlayers(level) {
+    const grid = document.getElementById(`grid-${level}`);
+    const ls = state.levels[level];
+    const lv = LEVELS[level];
+    const spent = getSpent(level);
+
+    grid.innerHTML = sortedPlayers(level).map(p => {
+        const isSel = ls.selected.includes(p.id);
+        const canAfford = spent + p.salary <= lv.budget;
+        const isDis = !isSel && (ls.selected.length >= lv.picks || !canAfford);
+        const stars = p.stars > 0 ? '⭐'.repeat(p.stars) : '—';
+
+        return `<div class="player-card${isSel ? ' selected' : ''}${isDis ? ' disabled' : ''}"
+                     id="card-${level}-${p.id}" onclick="pickPlayer(${level},'${p.id}')">
+            <div class="sel-check">✓</div>
+            <div class="card-top">
+                <span class="p-avatar">${p.emoji}</span>
+                <span class="p-name">${p.id}</span>
+            </div>
+            <div class="obp-wrap">
+                <div class="obp-top">
+                    <span class="obp-lbl">OBP</span>
+                    <span class="obp-val" style="color:${obpColor(p.obp)}">${p.obp.toFixed(3)}</span>
                 </div>
-            `).join('');
+                <div class="obp-track">
+                    <div class="obp-fill" style="width:${obpWidth(p.obp)}%;background:${obpColor(p.obp)}"></div>
+                </div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-pill"><span class="sp-lbl">HR</span><span class="sp-val">${p.hr}</span></div>
+                <div class="stat-pill"><span class="sp-lbl">Pop</span><span class="sp-val" style="font-size:0.72rem">${stars}</span></div>
+            </div>
+            <div class="salary-tag">
+                <span class="sal-amt">$${p.salary}M</span>
+                <span class="sal-unit">salary</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ─── SORT ─────────────────────────────────────────────────────────────────────
+function sortPlayers(level, mode) {
+    state.sortMode[level] = mode;
+    // Update button states
+    ['obp','salary','stars'].forEach(m => {
+        const btn = document.getElementById(`sort-${level}-${m}`);
+        if (btn) btn.classList.toggle('active', m === mode);
+    });
+    renderPlayers(level);
+    // Mark sort achievement (no-op, just tracking)
+}
+
+// ─── BUDGET ───────────────────────────────────────────────────────────────────
+function getSpent(level) {
+    const players = LEVELS[level].players;
+    return state.levels[level].selected.reduce((sum, id) => {
+        return sum + players.find(p => p.id === id).salary;
+    }, 0);
+}
+
+function renderBudget(level) {
+    const budget = LEVELS[level].budget;
+    const picks  = LEVELS[level].picks;
+    const ls     = state.levels[level];
+    const spent  = getSpent(level);
+    const pct    = Math.min(100, (spent / budget) * 100);
+    const fillCls= pct > 90 ? 'over' : pct > 75 ? 'tight' : '';
+
+    document.getElementById(`budget-${level}`).innerHTML = `
+        <div class="budget-top">
+            <span class="budget-lbl">Budget: $${budget}M</span>
+            <span class="budget-picks">Picks: <b>${ls.selected.length} / ${picks}</b></span>
+        </div>
+        <div class="budget-track">
+            <div class="budget-fill ${fillCls}" style="width:${pct}%"></div>
+        </div>
+        <div class="budget-nums">
+            <span class="budget-spent">$${spent}M spent</span>
+            <span class="budget-left">$${budget - spent}M remaining</span>
+        </div>`;
+}
+
+// ─── PICK PLAYER ──────────────────────────────────────────────────────────────
+function pickPlayer(level, id) {
+    const ls = state.levels[level];
+    const lv = LEVELS[level];
+    const player = lv.players.find(p => p.id === id);
+    const card = document.getElementById(`card-${level}-${id}`);
+    if (card.classList.contains('disabled')) return;
+
+    if (ls.selected.includes(id)) {
+        ls.selected = ls.selected.filter(x => x !== id);
+    } else {
+        const spent = getSpent(level);
+        if (ls.selected.length < lv.picks && spent + player.salary <= lv.budget) {
+            ls.selected.push(id);
         }
+    }
 
-        // Level 1: Quiz
-        function checkQuiz1(answer) {
-            const options = document.querySelectorAll('#quiz1-options .quiz-option');
-            options.forEach(opt => {
-                opt.style.pointerEvents = 'none';
-                if (opt.textContent.includes('B.')) {
-                    opt.classList.add('correct');
-                } else if (opt.textContent.includes(answer + '.') && answer !== 'B') {
-                    opt.classList.add('wrong');
-                }
-            });
+    renderPlayers(level);
+    renderBudget(level);
+    document.getElementById(`check-${level}`).disabled = ls.selected.length !== lv.picks;
+}
 
-            const feedback = document.getElementById('feedback1');
-            if (answer === 'B') {
-                feedback.className = 'feedback-box show success';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#127881;</div>
-                    <strong>Correct!</strong><br>
-                    OBP tells you how often a player reaches base. A player with high OBP helps score more runs!
-                `;
-            } else {
-                feedback.className = 'feedback-box show error';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#128161;</div>
-                    <strong>Not quite!</strong><br>
-                    The answer is B. OBP (On-Base Percentage) shows how often a player gets on base - that's the secret stat!
-                `;
+// ─── HINTS ────────────────────────────────────────────────────────────────────
+function showNextHint(level) {
+    const ls  = state.levels[level];
+    const hints = LEVELS[level].hints;
+    if (ls.hintsShown >= hints.length) return;
+
+    state.achievements.noHints = false;
+
+    const hint = hints[ls.hintsShown];
+    ls.hintsShown++;
+
+    const box = document.getElementById(`hint-${level}`);
+    box.innerHTML = `<div class="hint-step">${hint.step}</div>${hint.text}`;
+    box.classList.add('show');
+
+    const btn = document.getElementById(`hint-btn-${level}`);
+    if (ls.hintsShown >= hints.length) {
+        btn.style.display = 'none';
+    } else {
+        btn.textContent = '💡 More Hint';
+    }
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+function checkQuiz(answer) {
+    const opts = document.querySelectorAll('.quiz-opt');
+    opts.forEach(o => {
+        o.classList.add('locked');
+        if (o.dataset.ans === 'B') o.classList.add('correct');
+        else if (o.dataset.ans === answer && answer !== 'B') o.classList.add('wrong');
+    });
+
+    const fb = document.getElementById('feedback-1');
+    if (answer === 'B') {
+        fb.className = 'feedback-box show success';
+        fb.innerHTML = `<div class="fb-icon">🎉</div><div class="fb-title">Correct!</div>
+            <div class="fb-body">OBP tells you how often a player reaches base — hits, walks, and more. A high OBP means more runs!</div>`;
+    } else {
+        fb.className = 'feedback-box show error';
+        fb.innerHTML = `<div class="fb-icon">💡</div><div class="fb-title">Not quite!</div>
+            <div class="fb-body">The answer is <strong>B</strong>. OBP shows how often a player gets on base — that's the secret stat smart managers track!</div>`;
+    }
+    document.getElementById('next-1').style.display = 'inline-block';
+}
+
+// ─── CHECK DRAFT LEVEL ────────────────────────────────────────────────────────
+function valueScore(obp, salary) {
+    return ((obp / salary) * 1000).toFixed(1);
+}
+
+function checkLevel(level) {
+    const ls  = state.levels[level];
+    const lv  = LEVELS[level];
+    const sel = ls.selected;
+    const opt = lv.optimal;
+    const isCorrect = opt.every(id => sel.includes(id)) && sel.every(id => opt.includes(id));
+
+    const fb = document.getElementById(`feedback-${level}`);
+
+    if (isCorrect) {
+        ls.completed = true;
+        const spent = getSpent(level);
+        const totalObp = sel.reduce((s, id) => s + lv.players.find(p => p.id === id).obp, 0);
+        const effScore = valueScore(totalObp, spent);
+
+        fb.className = 'feedback-box show success';
+        fb.innerHTML = `<div class="fb-icon">${level === 2 ? '🎉' : '🏆'}</div>
+            <div class="fb-title">${level === 2 ? 'Perfect Pick!' : 'You did it!'}</div>
+            <div class="fb-body">Players ${sel.join(' + ')} give you the best OBP for the price. ${level === 2 ? 'You saved money AND got great players!' : 'That\'s Moneyball thinking!'}</div>`;
+
+        // Efficiency score
+        const effBox = document.getElementById(`eff-${level}`);
+        effBox.className = 'eff-box show';
+        effBox.innerHTML = `<div class="eff-lbl">Your Moneyball Efficiency Score</div>
+            <div class="eff-score">${effScore}</div>
+            <div class="eff-sub">Total OBP ÷ $ Spent × 1000 &nbsp;·&nbsp; Higher = Smarter</div>`;
+
+        // Breakdown
+        showBreakdown(level);
+
+        // Disable check button, add next button
+        document.getElementById(`check-${level}`).style.display = 'none';
+        setTimeout(() => {
+            const btns = document.getElementById(`btns-${level}`);
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn-primary';
+            nextBtn.innerHTML = level === 2 ? 'Next Level →' : 'Get Your Code! →';
+            nextBtn.onclick = () => goToLevel(level === 2 ? 3 : 'final');
+            btns.appendChild(nextBtn);
+        }, 400);
+
+    } else {
+        ls.attempts++;
+        state.achievements.firstTry = false;
+
+        fb.className = 'feedback-box show error';
+        fb.innerHTML = `<div class="fb-icon">🤔</div>
+            <div class="fb-title">Try again!</div>
+            <div class="fb-body">${level === 2
+                ? 'Look for the two players with the highest OBP for the lowest price. Stars don\'t matter!'
+                : 'Remember: you only have $15M. Focus on OBP, not home runs or popularity!'}</div>`;
+
+        setTimeout(() => {
+            ls.selected = [];
+            renderPlayers(level);
+            renderBudget(level);
+            document.getElementById(`check-${level}`).disabled = true;
+            fb.classList.remove('show');
+        }, 2200);
+    }
+}
+
+// ─── BREAKDOWN TABLE ──────────────────────────────────────────────────────────
+function showBreakdown(level) {
+    const lv  = LEVELS[level];
+    const sel = state.levels[level].selected;
+    const maxVal = Math.max(...lv.players.map(p => parseFloat(valueScore(p.obp, p.salary))));
+
+    const sorted = [...lv.players].sort((a, b) => parseFloat(valueScore(b.obp, b.salary)) - parseFloat(valueScore(a.obp, a.salary)));
+
+    const rows = sorted.map(p => {
+        const vs   = parseFloat(valueScore(p.obp, p.salary));
+        const pct  = Math.round((vs / maxVal) * 100);
+        const isPick = sel.includes(p.id);
+        const isOpt  = lv.optimal.includes(p.id);
+        return `<div class="bd-row${isPick ? ' your-pick' : ''}${isOpt ? ' optimal' : ''}">
+            <span>${p.emoji}</span>
+            <span>Player ${p.id}${isPick ? ' <span style="color:var(--green);font-size:0.75rem">✓ Your Pick</span>' : ''}${isOpt && !isPick ? ' <span style="color:var(--gold);font-size:0.75rem">★ Best</span>' : ''}</span>
+            <span style="color:${obpColor(p.obp)};font-weight:700">${p.obp.toFixed(3)}</span>
+            <span>$${p.salary}M</span>
+            <div class="val-bar">
+                <span class="val-num">${vs}</span>
+                <div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div>
+            </div>
+        </div>`;
+    }).join('');
+
+    const bd = document.getElementById(`breakdown-${level}`);
+    bd.className = 'breakdown show';
+    bd.innerHTML = `
+        <div class="bd-title">📊 Player Value Rankings — OBP ÷ Salary × 1000</div>
+        <div class="bd-head"><span></span><span>Player</span><span>OBP</span><span>Salary</span><span>Value Score</span></div>
+        ${rows}`;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function goToLevel(level) {
+    const cur  = document.querySelector('.screen.active');
+    const next = document.getElementById(level === 'final' ? 'screen-final' : `screen-${level}`);
+
+    if (level !== 'final') state.currentLevel = level;
+    else state.currentLevel = 4;
+
+    renderProgress();
+
+    if (cur) {
+        cur.classList.remove('visible');
+        setTimeout(() => {
+            cur.classList.remove('active');
+            next.classList.add('active');
+            requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add('visible')));
+        }, 320);
+    } else {
+        next.classList.add('active');
+        requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add('visible')));
+    }
+
+    if (level === 'final') {
+        setTimeout(() => {
+            renderFinalAchievements();
+            launchConfetti();
+        }, 400);
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── ACHIEVEMENTS ─────────────────────────────────────────────────────────────
+const ACHIEVEMENTS = [
+    { id: 'complete',  icon: '🏆', label: 'Moneyball Master',  desc: 'Completed all levels'       },
+    { id: 'firstTry',  icon: '🎯', label: 'Sharp Eye',         desc: 'First try on both drafts'   },
+    { id: 'noHints',   icon: '🧠', label: 'Self-Made Analyst', desc: 'Never used a hint'           }
+];
+
+function renderFinalAchievements() {
+    const earned = [];
+    earned.push('complete'); // always
+    if (state.achievements.firstTry) earned.push('firstTry');
+    if (state.achievements.noHints)  earned.push('noHints');
+
+    const grid = document.getElementById('final-ach-grid');
+    grid.innerHTML = ACHIEVEMENTS.filter(a => earned.includes(a.id)).map(a =>
+        `<div class="final-ach-badge">${a.icon} ${a.label}</div>`
+    ).join('');
+}
+
+// ─── CONFETTI ─────────────────────────────────────────────────────────────────
+function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx    = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#f5a623','#3fb950','#58a6ff','#f85149','#ffffff','#e879f9'];
+    const pieces = Array.from({ length: 160 }, () => ({
+        x:   Math.random() * canvas.width,
+        y:   Math.random() * -canvas.height,
+        w:   Math.random() * 10 + 5,
+        h:   Math.random() * 6  + 3,
+        col: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * 360,
+        vx:  Math.random() * 4  - 2,
+        vy:  Math.random() * 3  + 2,
+        vr:  Math.random() * 5  - 2.5
+    }));
+
+    let frame, tick = 0;
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach((p, i) => {
+            p.x  += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y > canvas.height + 20) {
+                pieces[i] = { ...p, x: Math.random() * canvas.width, y: -20, vy: Math.random() * 2 + 2 };
             }
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = p.col;
+            ctx.globalAlpha = Math.max(0, 1 - tick / 280);
+            ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.restore();
+        });
+        tick++;
+        if (tick < 300) frame = requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    draw();
+}
 
-            document.getElementById('next1-btn').style.display = 'inline-block';
-        }
+// ─── COPY CODE ────────────────────────────────────────────────────────────────
+function copyCode() {
+    navigator.clipboard.writeText('101-M3-L1-MONEYBALL').then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy Code'; }, 2000);
+    }).catch(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '101-M3-L1-MONEYBALL';
+    });
+}
 
-        // Level Navigation
-        function goToLevel(level) {
-            document.querySelectorAll('.level-screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(level === 4 ? 'final' : `level${level}`).classList.add('active');
+// ─── RESTART ──────────────────────────────────────────────────────────────────
+function restartGame() {
+    state.currentLevel = 1;
+    state.achievements = { firstTry: true, noHints: true };
+    state.sortMode = { 2: 'obp', 3: 'obp' };
+    state.levels = {
+        2: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        3: { selected: [], hintsShown: 0, attempts: 0, completed: false }
+    };
 
-            // Update progress bar
-            for (let i = 1; i <= 3; i++) {
-                const step = document.getElementById(`step${i}`);
-                const line = document.getElementById(`line${i}`);
+    // Reset quiz
+    document.querySelectorAll('.quiz-opt').forEach(o => o.classList.remove('correct','wrong','locked'));
+    document.getElementById('feedback-1').className = 'feedback-box';
+    document.getElementById('next-1').style.display = 'none';
 
-                if (i < level) {
-                    step.classList.remove('active');
-                    step.classList.add('completed');
-                    step.innerHTML = '✓';
-                    if (line) line.classList.add('completed');
-                } else if (i === level) {
-                    step.classList.add('active');
-                    step.classList.remove('completed');
-                    step.innerHTML = i;
-                } else {
-                    step.classList.remove('active', 'completed');
-                    step.innerHTML = i;
-                }
-            }
+    // Reset each draft level
+    [2, 3].forEach(lv => {
+        renderPlayers(lv);
+        renderBudget(lv);
 
-            currentLevel = level;
-        }
+        document.getElementById(`feedback-${lv}`).className = 'feedback-box';
+        document.getElementById(`eff-${lv}`).className = 'eff-box';
+        document.getElementById(`breakdown-${lv}`).className = 'breakdown';
+        document.getElementById(`hint-${lv}`).className = 'hint-box';
+        document.getElementById(`hint-btn-${lv}`).style.display = 'inline-block';
+        document.getElementById(`hint-btn-${lv}`).textContent = '💡 Need a Hint?';
+        document.getElementById(`check-${lv}`).disabled = true;
+        document.getElementById(`check-${lv}`).style.display = 'inline-block';
 
-        // Player Selection
-        function pickPlayer(level, id) {
-            const players = level === 2 ? playersLevel2 : playersLevel3;
-            const selected = level === 2 ? selected2 : selected3;
-            const budget = level === 2 ? 25 : 15;
+        // Remove dynamically added next buttons
+        const btns = document.getElementById(`btns-${lv}`);
+        btns.querySelectorAll('.btn-primary:not(#check-' + lv + ')').forEach(b => b.remove());
 
-            const card = document.getElementById(`card${level}-${id}`);
-            if (card.classList.contains('disabled')) return;
+        // Reset sort buttons
+        ['obp','salary','stars'].forEach(m => {
+            const btn = document.getElementById(`sort-${lv}-${m}`);
+            if (btn) btn.classList.toggle('active', m === 'obp');
+        });
+    });
 
-            const player = players.find(p => p.id === id);
+    renderProgress();
 
-            if (selected.includes(id)) {
-                if (level === 2) {
-                    selected2 = selected2.filter(x => x !== id);
-                } else {
-                    selected3 = selected3.filter(x => x !== id);
-                }
-                card.classList.remove('selected');
-            } else {
-                const currentSelected = level === 2 ? selected2 : selected3;
-                const spent = getSpent(level);
-                if (currentSelected.length < 2 && spent + player.salary <= budget) {
-                    if (level === 2) {
-                        selected2.push(id);
-                    } else {
-                        selected3.push(id);
-                    }
-                    card.classList.add('selected');
-                }
-            }
+    // Transition to level 1
+    const cur  = document.querySelector('.screen.active');
+    const next = document.getElementById('screen-1');
+    if (cur) {
+        cur.classList.remove('visible');
+        setTimeout(() => {
+            cur.classList.remove('active');
+            next.classList.add('active');
+            requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add('visible')));
+        }, 320);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-            updateDisplay(level);
-        }
-
-        function getSpent(level) {
-            const players = level === 2 ? playersLevel2 : playersLevel3;
-            const selected = level === 2 ? selected2 : selected3;
-            return selected.reduce((sum, id) => sum + players.find(p => p.id === id).salary, 0);
-        }
-
-        function updateDisplay(level) {
-            const players = level === 2 ? playersLevel2 : playersLevel3;
-            const selected = level === 2 ? selected2 : selected3;
-            const budget = level === 2 ? 25 : 15;
-            const spent = getSpent(level);
-
-            document.getElementById(`spent${level}`).textContent = `$${spent}M`;
-            document.getElementById(`picked${level}`).textContent = `${selected.length} / 2`;
-
-            const spentEl = document.getElementById(`spent${level}`);
-            spentEl.className = spent > budget * 0.8 ? 'budget-value money-tight' : 'budget-value money-left';
-
-            players.forEach(p => {
-                const card = document.getElementById(`card${level}-${p.id}`);
-                if (!selected.includes(p.id)) {
-                    if (selected.length >= 2 || spent + p.salary > budget) {
-                        card.classList.add('disabled');
-                    } else {
-                        card.classList.remove('disabled');
-                    }
-                }
-            });
-
-            document.getElementById(`check${level}-btn`).disabled = selected.length !== 2;
-        }
-
-        function toggleHint(level) {
-            document.getElementById(`hint${level}`).classList.toggle('show');
-        }
-
-        // Check Level 2
-        function checkLevel2() {
-            const isCorrect = selected2.includes('B') && selected2.includes('C');
-            const feedback = document.getElementById('feedback2');
-
-            if (isCorrect) {
-                feedback.className = 'feedback-box show success';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#127881;</div>
-                    <strong>Perfect!</strong> Players B and C have the best OBP for the lowest price. You saved money AND got great players!
-                `;
-                document.getElementById('check2-btn').style.display = 'none';
-
-                setTimeout(() => {
-                    const btn = document.createElement('button');
-                    btn.className = 'primary-btn';
-                    btn.textContent = 'Next Level →';
-                    btn.onclick = () => goToLevel(3);
-                    document.getElementById('level2').querySelector('.buttons').appendChild(btn);
-                }, 500);
-            } else {
-                feedback.className = 'feedback-box show error';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#129300;</div>
-                    <strong>Try again!</strong> Look for the two players with the highest OBP and lowest prices. Stars don't matter!
-                `;
-
-                // Reset selections
-                setTimeout(() => {
-                    selected2 = [];
-                    document.querySelectorAll('[id^="card2-"]').forEach(c => c.classList.remove('selected', 'disabled'));
-                    updateDisplay(2);
-                    feedback.classList.remove('show');
-                }, 2000);
-            }
-        }
-
-        // Check Level 3
-        function checkLevel3() {
-            // Best picks for $15M budget: G ($5M, 0.355 OBP) + H ($7M, 0.380 OBP) = $12M
-            const isCorrect = selected3.includes('G') && selected3.includes('H');
-            const feedback = document.getElementById('feedback3');
-
-            if (isCorrect) {
-                feedback.className = 'feedback-box show success';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#127942;</div>
-                    <strong>You did it!</strong> Players G and H give you the best OBP for just $12M. You're thinking like a Moneyball pro!
-                `;
-                document.getElementById('check3-btn').style.display = 'none';
-
-                setTimeout(() => {
-                    const btn = document.createElement('button');
-                    btn.className = 'primary-btn';
-                    btn.textContent = 'Get Your Code! →';
-                    btn.onclick = () => goToLevel(4);
-                    document.getElementById('level3').querySelector('.buttons').appendChild(btn);
-                }, 500);
-            } else {
-                feedback.className = 'feedback-box show error';
-                feedback.innerHTML = `
-                    <div class="feedback-icon">&#129300;</div>
-                    <strong>Not quite!</strong> Remember: you only have $15M. Find the best OBP you can afford!
-                `;
-
-                setTimeout(() => {
-                    selected3 = [];
-                    document.querySelectorAll('[id^="card3-"]').forEach(c => c.classList.remove('selected', 'disabled'));
-                    updateDisplay(3);
-                    feedback.classList.remove('show');
-                }, 2000);
-            }
-        }
-
-        function restartGame() {
-            selected2 = [];
-            selected3 = [];
-
-            document.querySelectorAll('.player-card').forEach(c => c.classList.remove('selected', 'disabled'));
-            document.querySelectorAll('.feedback-box').forEach(f => f.classList.remove('show'));
-            document.querySelectorAll('.hint-box').forEach(h => h.classList.remove('show'));
-
-            document.querySelectorAll('#quiz1-options .quiz-option').forEach(opt => {
-                opt.classList.remove('correct', 'wrong');
-                opt.style.pointerEvents = 'auto';
-            });
-
-            document.getElementById('feedback1').classList.remove('show');
-            document.getElementById('next1-btn').style.display = 'none';
-
-            // Reset extra buttons
-            document.querySelectorAll('.buttons .primary-btn').forEach(btn => {
-                if (btn.textContent.includes('Next') || btn.textContent.includes('Get Your')) {
-                    btn.remove();
-                }
-            });
-            document.getElementById('check2-btn').style.display = 'inline-block';
-            document.getElementById('check3-btn').style.display = 'inline-block';
-
-            // Reset progress
-            for (let i = 1; i <= 3; i++) {
-                const step = document.getElementById(`step${i}`);
-                const line = document.getElementById(`line${i}`);
-                step.classList.remove('active', 'completed');
-                step.innerHTML = i;
-                if (line) line.classList.remove('completed');
-            }
-            document.getElementById('step1').classList.add('active');
-
-            updateDisplay(2);
-            updateDisplay(3);
-            goToLevel(1);
-        }
-
-        // Start game
-        init();
-    </script>
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+init();
+</script>
 </body>
 </html>
