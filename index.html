@@ -60,19 +60,19 @@
             padding: 16px 24px;
         }
         .progress-track { display: flex; align-items: center; justify-content: center; }
-        .p-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; max-width: 130px; }
+        .p-node { display: flex; flex-direction: column; align-items: center; gap: 7px; flex: 1; max-width: 90px; }
         .p-circle {
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 28px; height: 28px; border-radius: 50%;
             border: 2px solid var(--border); background: var(--bg3);
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 0.95rem; transition: all var(--t);
+            font-weight: 700; font-size: 0.78rem; transition: all var(--t);
         }
         .p-circle.active  { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); box-shadow: 0 0 14px rgba(245,166,35,0.25); }
         .p-circle.done    { border-color: var(--green); background: var(--green-dark); color: #fff; }
-        .p-label { font-size: 0.7rem; color: var(--muted); text-align: center; line-height: 1.3; transition: color var(--t); }
+        .p-label { font-size: 0.62rem; color: var(--muted); text-align: center; line-height: 1.3; transition: color var(--t); }
         .p-label.active { color: var(--gold); }
         .p-label.done   { color: var(--green); }
-        .p-line { flex: 1; height: 2px; background: var(--border); margin: 0 4px 20px; transition: background var(--t); }
+        .p-line { flex: 1; height: 2px; background: var(--border); margin: 0 2px 20px; transition: background var(--t); }
         .p-line.done { background: var(--green); }
 
         /* ── SCREENS ── */
@@ -326,6 +326,8 @@
         @media (max-width: 560px) {
             .players-grid { grid-template-columns: repeat(2, 1fr); }
             .bd-head, .bd-row { grid-template-columns: 28px 1fr 52px 52px 70px; font-size: 0.77rem; padding: 8px 10px; }
+            .p-node { max-width: 60px; }
+            .p-label { display: none; }
         }
         @media (max-width: 360px) {
             .players-grid { grid-template-columns: repeat(2, 1fr); }
@@ -417,12 +419,91 @@
         </div>
     </div>
 
+    <!-- SCREEN 4: OPS Era -->
+    <div class="screen" id="screen-4">
+        <div class="mission-box">
+            <div class="level-tag">Level 4 · The OPS Era</div>
+            <p>New stat unlocked! <span class="hl">OPS = OBP + SLG</span>. Pick <span class="hl">2 players</span> with <span class="hl">$22M</span>. A player who gets on base AND hits for power is the real gem!</p>
+        </div>
+        <div class="budget-wrap" id="budget-4"></div>
+        <div class="sort-bar">
+            <span class="sort-lbl">Sort by:</span>
+            <button class="sort-btn"        id="sort-4-obp"    onclick="sortPlayers(4,'obp')">OBP ↓</button>
+            <button class="sort-btn active" id="sort-4-ops"    onclick="sortPlayers(4,'ops')">OPS ↓</button>
+            <button class="sort-btn"        id="sort-4-salary" onclick="sortPlayers(4,'salary')">Salary ↑</button>
+            <button class="sort-btn"        id="sort-4-stars"  onclick="sortPlayers(4,'stars')">Popularity ↓</button>
+        </div>
+        <div class="players-grid" id="grid-4"></div>
+        <div class="hint-area">
+            <button class="btn-hint" id="hint-btn-4" onclick="showNextHint(4)">💡 Need a Hint?</button>
+            <div class="hint-box" id="hint-4"></div>
+        </div>
+        <div class="feedback-box" id="feedback-4"></div>
+        <div class="eff-box" id="eff-4"></div>
+        <div class="breakdown" id="breakdown-4"></div>
+        <div class="buttons" id="btns-4">
+            <button class="btn-primary" id="check-4" disabled onclick="checkLevel(4)">Check My Picks ✓</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: WAR Room -->
+    <div class="screen" id="screen-5">
+        <div class="mission-box">
+            <div class="level-tag">Level 5 · The WAR Room</div>
+            <p>Advanced mode! <span class="hl">WAR</span> (Wins Above Replacement) measures <em>everything</em> — hitting, fielding, baserunning. Pick <span class="hl">3 players</span> with <span class="hl">$24M</span> to maximize your team's total WAR!</p>
+        </div>
+        <div class="budget-wrap" id="budget-5"></div>
+        <div class="sort-bar">
+            <span class="sort-lbl">Sort by:</span>
+            <button class="sort-btn"        id="sort-5-obp"    onclick="sortPlayers(5,'obp')">OBP ↓</button>
+            <button class="sort-btn active" id="sort-5-war"    onclick="sortPlayers(5,'war')">WAR ↓</button>
+            <button class="sort-btn"        id="sort-5-salary" onclick="sortPlayers(5,'salary')">Salary ↑</button>
+        </div>
+        <div class="players-grid" id="grid-5"></div>
+        <div class="hint-area">
+            <button class="btn-hint" id="hint-btn-5" onclick="showNextHint(5)">💡 Need a Hint?</button>
+            <div class="hint-box" id="hint-5"></div>
+        </div>
+        <div class="feedback-box" id="feedback-5"></div>
+        <div class="eff-box" id="eff-5"></div>
+        <div class="breakdown" id="breakdown-5"></div>
+        <div class="buttons" id="btns-5">
+            <button class="btn-primary" id="check-5" disabled onclick="checkLevel(5)">Check My Picks ✓</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 6: Championship GM -->
+    <div class="screen" id="screen-6">
+        <div class="mission-box">
+            <div class="level-tag">Level 6 · Championship GM</div>
+            <p>The final challenge! Pick <span class="hl">4 players</span> with <span class="hl">$30M</span>. Balance <span class="hl">OPS</span> AND <span class="hl">WAR</span> — no single stat is enough to build a champion!</p>
+        </div>
+        <div class="budget-wrap" id="budget-6"></div>
+        <div class="sort-bar">
+            <span class="sort-lbl">Sort by:</span>
+            <button class="sort-btn active" id="sort-6-ops"    onclick="sortPlayers(6,'ops')">OPS ↓</button>
+            <button class="sort-btn"        id="sort-6-war"    onclick="sortPlayers(6,'war')">WAR ↓</button>
+            <button class="sort-btn"        id="sort-6-salary" onclick="sortPlayers(6,'salary')">Salary ↑</button>
+        </div>
+        <div class="players-grid" id="grid-6"></div>
+        <div class="hint-area">
+            <button class="btn-hint" id="hint-btn-6" onclick="showNextHint(6)">💡 Need a Hint?</button>
+            <div class="hint-box" id="hint-6"></div>
+        </div>
+        <div class="feedback-box" id="feedback-6"></div>
+        <div class="eff-box" id="eff-6"></div>
+        <div class="breakdown" id="breakdown-6"></div>
+        <div class="buttons" id="btns-6">
+            <button class="btn-primary" id="check-6" disabled onclick="checkLevel(6)">Check My Picks ✓</button>
+        </div>
+    </div>
+
     <!-- SCREEN: Final -->
     <div class="screen" id="screen-final">
         <div class="final-wrap">
             <span class="trophy">🏆</span>
             <h2 class="final-title">You're a Moneyball Master!</h2>
-            <p class="final-sub">You completed all 3 levels and learned to find hidden value like a real GM!</p>
+            <p class="final-sub">You completed all 6 levels and mastered data analytics like a real GM!</p>
             <div class="code-box">
                 <div class="code-lbl">Your Completion Code</div>
                 <div class="code-val">101-M3-L1-MONEYBALL</div><br>
@@ -435,9 +516,10 @@
             <div class="summary-box">
                 <h3>📖 What You Learned</h3>
                 <div class="sum-item"><span class="sum-check">✓</span><span><strong>OBP</strong> tells you how often a player gets on base — the real key to scoring runs</span></div>
-                <div class="sum-item"><span class="sum-check">✓</span><span>Popular high-star players aren't always the best value</span></div>
-                <div class="sum-item"><span class="sum-check">✓</span><span>Smart managers use <strong>data and analytics</strong>, not hype</span></div>
-                <div class="sum-item"><span class="sum-check">✓</span><span>Finding undervalued players = building a <strong>winning team on a budget!</strong></span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span>Popular high-star players aren't always the best value — data beats hype</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span><strong>OPS</strong> (OBP + Slugging) gives the full offensive picture — getting on base AND power matter</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span><strong>WAR</strong> (Wins Above Replacement) captures everything — hitting, fielding, baserunning in one number</span></div>
+                <div class="sum-item"><span class="sum-check">✓</span><span>Real GMs balance <strong>multiple stats</strong> and budgets to build championship rosters!</span></div>
             </div>
             <div class="buttons">
                 <button class="btn-secondary" onclick="restartGame()">↺ Play Again</button>
@@ -453,6 +535,7 @@ const LEVELS = {
     2: {
         budget: 25, picks: 2,
         optimal: ['B', 'C'],
+        statMode: 'obp',
         hints: [
             { step: 'Hint 1 of 2', text: 'Try sorting by OBP — which players get on base most often for the lowest price?' },
             { step: 'Hint 2 of 2', text: 'Player C has the highest OBP (0.400) and costs only $6M. That\'s the best value deal on the board!' }
@@ -468,6 +551,7 @@ const LEVELS = {
     3: {
         budget: 15, picks: 2,
         optimal: ['G', 'H'],
+        statMode: 'obp',
         hints: [
             { step: 'Hint 1 of 2', text: 'With only $15M, you can\'t afford the big stars. Try sorting by Salary first to see what\'s affordable.' },
             { step: 'Hint 2 of 2', text: 'Players G and H together cost only $12M and have great OBP. That\'s the Moneyball move!' }
@@ -479,18 +563,75 @@ const LEVELS = {
             { id:'I', emoji:'💪', obp:0.320, hr:20, salary:10, stars:3 },
             { id:'J', emoji:'🌟', obp:0.340, hr:12, salary:8,  stars:2 }
         ]
+    },
+    4: {
+        budget: 22, picks: 2,
+        optimal: ['L', 'N'],
+        statMode: 'ops',
+        hints: [
+            { step: 'Hint 1 of 2', text: 'Sort by OPS — it combines OBP and Slugging. A player can look great on OBP alone but have a weak OPS if they rarely hit for power!' },
+            { step: 'Hint 2 of 2', text: 'Player L has 0.850 OPS at $10M. Player N has 0.805 OPS at just $8M. Together for $18M they give you the best combined offense!' }
+        ],
+        players: [
+            { id:'K', emoji:'🧩', obp:0.410, slg:0.290, ops:0.700, hr:7,  salary:13, stars:3 },
+            { id:'L', emoji:'💎', obp:0.345, slg:0.505, ops:0.850, hr:28, salary:10, stars:2 },
+            { id:'M', emoji:'⭐', obp:0.295, slg:0.560, ops:0.855, hr:40, salary:15, stars:5 },
+            { id:'N', emoji:'🎯', obp:0.360, slg:0.445, ops:0.805, hr:21, salary:8,  stars:1 },
+            { id:'O', emoji:'🔥', obp:0.330, slg:0.430, ops:0.760, hr:17, salary:7,  stars:2 },
+            { id:'P', emoji:'🌟', obp:0.290, slg:0.360, ops:0.650, hr:12, salary:5,  stars:4 }
+        ]
+    },
+    5: {
+        budget: 24, picks: 3,
+        optimal: ['T', 'R', 'V'],
+        statMode: 'war',
+        hints: [
+            { step: 'Hint 1 of 2', text: 'Sort by WAR — it measures everything a player contributes, not just home runs. A 5-star player with low WAR is fooling you!' },
+            { step: 'Hint 2 of 2', text: 'Player T has the highest WAR (5.0) at $10M. Player R has 4.2 WAR for only $8M. Add Player V (2.8 WAR, $6M) and you\'ve spent exactly $24M for 12.0 total WAR!' }
+        ],
+        players: [
+            { id:'Q', emoji:'🌟', obp:0.350, war:1.5, hr:30, salary:12, stars:5 },
+            { id:'R', emoji:'🎯', obp:0.340, war:4.2, hr:18, salary:8,  stars:0 },
+            { id:'S', emoji:'⭐', obp:0.380, war:3.1, hr:12, salary:11, stars:4 },
+            { id:'T', emoji:'💪', obp:0.310, war:5.0, hr:35, salary:10, stars:1 },
+            { id:'U', emoji:'🏃', obp:0.360, war:3.6, hr:22, salary:7,  stars:2 },
+            { id:'V', emoji:'🔥', obp:0.325, war:2.8, hr:19, salary:6,  stars:1 },
+            { id:'W', emoji:'🧠', obp:0.290, war:1.2, hr:14, salary:5,  stars:3 }
+        ]
+    },
+    6: {
+        budget: 30, picks: 4,
+        optimal: ['Y', 'Z', 'BB', 'CC'],
+        statMode: 'composite',
+        hints: [
+            { step: 'Hint 1 of 2', text: 'Sort by both OPS and WAR — you need balance. Player X looks incredible but costs $12M alone, leaving too little for the other 3 spots!' },
+            { step: 'Hint 2 of 2', text: 'Players Y, Z, BB, and CC together cost exactly $30M. Check their OPS AND WAR — they\'re the most well-rounded roster you can build!' }
+        ],
+        players: [
+            { id:'X',  emoji:'🏆', obp:0.385, ops:0.840, war:4.8, hr:28, salary:12, stars:5 },
+            { id:'Y',  emoji:'🎯', obp:0.355, ops:0.830, war:4.2, hr:24, salary:9,  stars:1 },
+            { id:'Z',  emoji:'💎', obp:0.370, ops:0.810, war:3.8, hr:20, salary:8,  stars:2 },
+            { id:'AA', emoji:'🌟', obp:0.290, ops:0.880, war:2.5, hr:45, salary:11, stars:4 },
+            { id:'BB', emoji:'🧠', obp:0.345, ops:0.760, war:3.5, hr:18, salary:7,  stars:0 },
+            { id:'CC', emoji:'⚡', obp:0.335, ops:0.765, war:2.9, hr:16, salary:6,  stars:1 },
+            { id:'DD', emoji:'💪', obp:0.310, ops:0.800, war:1.8, hr:32, salary:8,  stars:4 },
+            { id:'EE', emoji:'🔥', obp:0.325, ops:0.710, war:2.2, hr:14, salary:5,  stars:2 }
+        ]
     }
 };
 
-const PROGRESS_LABELS = ['Learn the Secret', 'First Draft', 'Real Challenge'];
+const PROGRESS_LABELS = ['Learn the Secret', 'First Draft', 'Real Challenge', 'The OPS Era', 'The WAR Room', 'Championship GM'];
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 const state = {
     currentLevel: 1,
-    sortMode: { 2: 'obp', 3: 'obp' },
+    sortMode: { 2: 'obp', 3: 'obp', 4: 'ops', 5: 'war', 6: 'ops' },
     levels: {
         2: { selected: [], hintsShown: 0, attempts: 0, completed: false },
-        3: { selected: [], hintsShown: 0, attempts: 0, completed: false }
+        3: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        4: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        5: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        6: { selected: [], hintsShown: 0, attempts: 0, completed: false }
     },
     achievements: { firstTry: true, noHints: true }
 };
@@ -500,8 +641,14 @@ function init() {
     renderProgress();
     renderPlayers(2);
     renderPlayers(3);
+    renderPlayers(4);
+    renderPlayers(5);
+    renderPlayers(6);
     renderBudget(2);
     renderBudget(3);
+    renderBudget(4);
+    renderBudget(5);
+    renderBudget(6);
 
     // Quiz click handlers
     document.querySelectorAll('.quiz-opt').forEach(opt => {
@@ -522,22 +669,22 @@ function renderProgress() {
     const track = document.getElementById('progress-track');
     const lvl = state.currentLevel;
     let html = '';
-    for (let i = 1; i <= 3; i++) {
-        const done   = (i < lvl) || (lvl > 3);
-        const active = (i === lvl) && (lvl <= 3);
+    for (let i = 1; i <= 6; i++) {
+        const done   = (i < lvl) || (lvl > 6);
+        const active = (i === lvl) && (lvl <= 6);
         const cc = done ? 'done' : active ? 'active' : '';
         html += `<div class="p-node">
             <div class="p-circle ${cc}">${done ? '✓' : i}</div>
             <div class="p-label ${cc}">${PROGRESS_LABELS[i-1]}</div>
         </div>`;
-        if (i < 3) {
+        if (i < 6) {
             html += `<div class="p-line ${done ? 'done' : ''}"></div>`;
         }
     }
     track.innerHTML = html;
 }
 
-// ─── OBP COLOR ────────────────────────────────────────────────────────────────
+// ─── COLOR HELPERS ────────────────────────────────────────────────────────────
 function obpColor(obp) {
     // 0.280 → red, 0.380+ → green
     const t = Math.max(0, Math.min(1, (obp - 0.280) / 0.120));
@@ -549,6 +696,25 @@ function obpColor(obp) {
 function obpWidth(obp) {
     return Math.round(Math.max(5, Math.min(100, (obp - 0.240) / 0.200 * 100)));
 }
+function opsColor(ops) {
+    // 0.600 → red, 0.900+ → green
+    const t = Math.max(0, Math.min(1, (ops - 0.600) / 0.300));
+    const r = Math.round(248 - t * (248 - 63));
+    const g = Math.round(81  + t * (185 - 81));
+    const b = Math.round(73  - t * (73 - 50));
+    return `rgb(${r},${g},${b})`;
+}
+function opsWidth(ops) {
+    return Math.round(Math.max(5, Math.min(100, (ops - 0.550) / 0.400 * 100)));
+}
+function warColor(war) {
+    // 0 → red, 5+ → green
+    const t = Math.max(0, Math.min(1, war / 5));
+    const r = Math.round(248 - t * (248 - 63));
+    const g = Math.round(81  + t * (185 - 81));
+    const b = Math.round(73  - t * (73 - 50));
+    return `rgb(${r},${g},${b})`;
+}
 
 // ─── RENDER PLAYERS ───────────────────────────────────────────────────────────
 function sortedPlayers(level) {
@@ -557,28 +723,32 @@ function sortedPlayers(level) {
     if (mode === 'obp')    return players.sort((a,b) => b.obp - a.obp);
     if (mode === 'salary') return players.sort((a,b) => a.salary - b.salary);
     if (mode === 'stars')  return players.sort((a,b) => b.stars - a.stars);
+    if (mode === 'ops')    return players.sort((a,b) => b.ops - a.ops);
+    if (mode === 'war')    return players.sort((a,b) => b.war - a.war);
     return players;
 }
 
-function renderPlayers(level) {
-    const grid = document.getElementById(`grid-${level}`);
-    const ls = state.levels[level];
-    const lv = LEVELS[level];
-    const spent = getSpent(level);
-
-    grid.innerHTML = sortedPlayers(level).map(p => {
-        const isSel = ls.selected.includes(p.id);
-        const canAfford = spent + p.salary <= lv.budget;
-        const isDis = !isSel && (ls.selected.length >= lv.picks || !canAfford);
-        const stars = p.stars > 0 ? '⭐'.repeat(p.stars) : '—';
-
-        return `<div class="player-card${isSel ? ' selected' : ''}${isDis ? ' disabled' : ''}"
-                     id="card-${level}-${p.id}" onclick="pickPlayer(${level},'${p.id}')">
-            <div class="sel-check">✓</div>
-            <div class="card-top">
-                <span class="p-avatar">${p.emoji}</span>
-                <span class="p-name">${p.id}</span>
+function renderCardStats(p, statMode) {
+    const stars = p.stars > 0 ? '⭐'.repeat(p.stars) : '—';
+    if (statMode === 'ops') {
+        return `
+            <div class="obp-wrap">
+                <div class="obp-top">
+                    <span class="obp-lbl">OPS</span>
+                    <span class="obp-val" style="color:${opsColor(p.ops)}">${p.ops.toFixed(3)}</span>
+                </div>
+                <div class="obp-track">
+                    <div class="obp-fill" style="width:${opsWidth(p.ops)}%;background:${opsColor(p.ops)}"></div>
+                </div>
             </div>
+            <div class="stats-row">
+                <div class="stat-pill"><span class="sp-lbl">OBP</span><span class="sp-val" style="color:${obpColor(p.obp)}">${p.obp.toFixed(3)}</span></div>
+                <div class="stat-pill"><span class="sp-lbl">SLG</span><span class="sp-val">${p.slg.toFixed(3)}</span></div>
+                <div class="stat-pill"><span class="sp-lbl">Pop</span><span class="sp-val" style="font-size:0.72rem">${stars}</span></div>
+            </div>`;
+    }
+    if (statMode === 'war') {
+        return `
             <div class="obp-wrap">
                 <div class="obp-top">
                     <span class="obp-lbl">OBP</span>
@@ -589,9 +759,64 @@ function renderPlayers(level) {
                 </div>
             </div>
             <div class="stats-row">
+                <div class="stat-pill"><span class="sp-lbl">WAR</span><span class="sp-val" style="color:${warColor(p.war)}">${p.war.toFixed(1)}</span></div>
                 <div class="stat-pill"><span class="sp-lbl">HR</span><span class="sp-val">${p.hr}</span></div>
                 <div class="stat-pill"><span class="sp-lbl">Pop</span><span class="sp-val" style="font-size:0.72rem">${stars}</span></div>
+            </div>`;
+    }
+    if (statMode === 'composite') {
+        return `
+            <div class="obp-wrap">
+                <div class="obp-top">
+                    <span class="obp-lbl">OPS</span>
+                    <span class="obp-val" style="color:${opsColor(p.ops)}">${p.ops.toFixed(3)}</span>
+                </div>
+                <div class="obp-track">
+                    <div class="obp-fill" style="width:${opsWidth(p.ops)}%;background:${opsColor(p.ops)}"></div>
+                </div>
             </div>
+            <div class="stats-row">
+                <div class="stat-pill"><span class="sp-lbl">WAR</span><span class="sp-val" style="color:${warColor(p.war)}">${p.war.toFixed(1)}</span></div>
+                <div class="stat-pill"><span class="sp-lbl">OBP</span><span class="sp-val" style="color:${obpColor(p.obp)}">${p.obp.toFixed(3)}</span></div>
+            </div>`;
+    }
+    // Default: 'obp' mode (levels 2-3)
+    return `
+        <div class="obp-wrap">
+            <div class="obp-top">
+                <span class="obp-lbl">OBP</span>
+                <span class="obp-val" style="color:${obpColor(p.obp)}">${p.obp.toFixed(3)}</span>
+            </div>
+            <div class="obp-track">
+                <div class="obp-fill" style="width:${obpWidth(p.obp)}%;background:${obpColor(p.obp)}"></div>
+            </div>
+        </div>
+        <div class="stats-row">
+            <div class="stat-pill"><span class="sp-lbl">HR</span><span class="sp-val">${p.hr}</span></div>
+            <div class="stat-pill"><span class="sp-lbl">Pop</span><span class="sp-val" style="font-size:0.72rem">${stars}</span></div>
+        </div>`;
+}
+
+function renderPlayers(level) {
+    const grid = document.getElementById(`grid-${level}`);
+    const ls = state.levels[level];
+    const lv = LEVELS[level];
+    const spent = getSpent(level);
+    const statMode = lv.statMode || 'obp';
+
+    grid.innerHTML = sortedPlayers(level).map(p => {
+        const isSel = ls.selected.includes(p.id);
+        const canAfford = spent + p.salary <= lv.budget;
+        const isDis = !isSel && (ls.selected.length >= lv.picks || !canAfford);
+
+        return `<div class="player-card${isSel ? ' selected' : ''}${isDis ? ' disabled' : ''}"
+                     id="card-${level}-${p.id}" onclick="pickPlayer(${level},'${p.id}')">
+            <div class="sel-check">✓</div>
+            <div class="card-top">
+                <span class="p-avatar">${p.emoji}</span>
+                <span class="p-name">${p.id}</span>
+            </div>
+            ${renderCardStats(p, statMode)}
             <div class="salary-tag">
                 <span class="sal-amt">$${p.salary}M</span>
                 <span class="sal-unit">salary</span>
@@ -601,15 +826,22 @@ function renderPlayers(level) {
 }
 
 // ─── SORT ─────────────────────────────────────────────────────────────────────
+const SORT_KEYS = {
+    2: ['obp','salary','stars'],
+    3: ['obp','salary','stars'],
+    4: ['obp','ops','salary','stars'],
+    5: ['obp','war','salary'],
+    6: ['ops','war','salary']
+};
+
 function sortPlayers(level, mode) {
     state.sortMode[level] = mode;
-    // Update button states
-    ['obp','salary','stars'].forEach(m => {
+    const keys = SORT_KEYS[level] || ['obp','salary','stars'];
+    keys.forEach(m => {
         const btn = document.getElementById(`sort-${level}-${m}`);
         if (btn) btn.classList.toggle('active', m === mode);
     });
     renderPlayers(level);
-    // Mark sort achievement (no-op, just tracking)
 }
 
 // ─── BUDGET ───────────────────────────────────────────────────────────────────
@@ -710,9 +942,41 @@ function checkQuiz(answer) {
 }
 
 // ─── CHECK DRAFT LEVEL ────────────────────────────────────────────────────────
-function valueScore(obp, salary) {
-    return ((obp / salary) * 1000).toFixed(1);
+function levelEffScore(level, sel, spent) {
+    const lv = LEVELS[level];
+    const players = lv.players;
+    if (lv.statMode === 'ops') {
+        const totalOps = sel.reduce((s, id) => s + players.find(p => p.id === id).ops, 0);
+        return { score: ((totalOps / spent) * 1000).toFixed(1), label: 'OPS Efficiency Score', sub: 'Total OPS ÷ $ Spent × 1000' };
+    }
+    if (lv.statMode === 'war') {
+        const totalWar = sel.reduce((s, id) => s + players.find(p => p.id === id).war, 0);
+        return { score: totalWar.toFixed(1), label: 'Team Total WAR', sub: 'Sum of all players\' Wins Above Replacement' };
+    }
+    if (lv.statMode === 'composite') {
+        const totalOps = sel.reduce((s, id) => s + players.find(p => p.id === id).ops, 0);
+        const totalWar = sel.reduce((s, id) => s + players.find(p => p.id === id).war, 0);
+        return { score: (((totalOps + totalWar / 10) / spent) * 100).toFixed(1), label: 'Composite GM Score', sub: '(OPS + WAR÷10) ÷ $ Spent × 100 · Higher = Champion' };
+    }
+    // Default: OBP
+    const totalObp = sel.reduce((s, id) => s + players.find(p => p.id === id).obp, 0);
+    return { score: ((totalObp / spent) * 1000).toFixed(1), label: 'Moneyball Efficiency Score', sub: 'Total OBP ÷ $ Spent × 1000 · Higher = Smarter' };
 }
+
+const LEVEL_SUCCESS = {
+    2: { icon:'🎉', title:'Perfect Pick!',      body: (sel) => `Players ${sel.join(' + ')} give you the best OBP for the price. You saved money AND got great players!` },
+    3: { icon:'🏆', title:'You did it!',         body: (sel) => `Players ${sel.join(' + ')} have great OBP within a tight $15M. That's Moneyball thinking!` },
+    4: { icon:'📈', title:'OPS Master!',         body: (sel) => `Players ${sel.join(' + ')} give you the best combined OPS. You looked beyond just OBP — that's next-level analysis!` },
+    5: { icon:'⚾', title:'WAR Genius!',         body: (sel) => `Players ${sel.join(' + ')} maximize team WAR within $24M. You measured players by their TOTAL contribution!` },
+    6: { icon:'🏆', title:'Championship GM!',    body: (sel) => `Players ${sel.join(' + ')} balance OPS and WAR perfectly within $30M. You built a championship roster like a real GM!` }
+};
+const LEVEL_ERROR = {
+    2: 'Look for the two players with the highest OBP for the lowest price. Stars don\'t matter!',
+    3: 'Remember: you only have $15M. Focus on OBP, not home runs or popularity!',
+    4: 'Sort by OPS — it combines OBP and Slugging. High OBP alone isn\'t enough anymore!',
+    5: 'Sort by WAR to see who truly contributes the most. A big HR count doesn\'t mean high WAR!',
+    6: 'Balance OPS and WAR together. The biggest star eats too much of your $30M budget!'
+};
 
 function checkLevel(level) {
     const ls  = state.levels[level];
@@ -726,20 +990,20 @@ function checkLevel(level) {
     if (isCorrect) {
         ls.completed = true;
         const spent = getSpent(level);
-        const totalObp = sel.reduce((s, id) => s + lv.players.find(p => p.id === id).obp, 0);
-        const effScore = valueScore(totalObp, spent);
+        const { score, label, sub } = levelEffScore(level, sel, spent);
+        const msg = LEVEL_SUCCESS[level] || LEVEL_SUCCESS[3];
 
         fb.className = 'feedback-box show success';
-        fb.innerHTML = `<div class="fb-icon">${level === 2 ? '🎉' : '🏆'}</div>
-            <div class="fb-title">${level === 2 ? 'Perfect Pick!' : 'You did it!'}</div>
-            <div class="fb-body">Players ${sel.join(' + ')} give you the best OBP for the price. ${level === 2 ? 'You saved money AND got great players!' : 'That\'s Moneyball thinking!'}</div>`;
+        fb.innerHTML = `<div class="fb-icon">${msg.icon}</div>
+            <div class="fb-title">${msg.title}</div>
+            <div class="fb-body">${msg.body(sel)}</div>`;
 
         // Efficiency score
         const effBox = document.getElementById(`eff-${level}`);
         effBox.className = 'eff-box show';
-        effBox.innerHTML = `<div class="eff-lbl">Your Moneyball Efficiency Score</div>
-            <div class="eff-score">${effScore}</div>
-            <div class="eff-sub">Total OBP ÷ $ Spent × 1000 &nbsp;·&nbsp; Higher = Smarter</div>`;
+        effBox.innerHTML = `<div class="eff-lbl">${label}</div>
+            <div class="eff-score">${score}</div>
+            <div class="eff-sub">${sub}</div>`;
 
         // Breakdown
         showBreakdown(level);
@@ -750,8 +1014,9 @@ function checkLevel(level) {
             const btns = document.getElementById(`btns-${level}`);
             const nextBtn = document.createElement('button');
             nextBtn.className = 'btn-primary';
-            nextBtn.innerHTML = level === 2 ? 'Next Level →' : 'Get Your Code! →';
-            nextBtn.onclick = () => goToLevel(level === 2 ? 3 : 'final');
+            const isLast = level === 6;
+            nextBtn.innerHTML = isLast ? 'Get Your Code! →' : 'Next Level →';
+            nextBtn.onclick = () => goToLevel(isLast ? 'final' : level + 1);
             btns.appendChild(nextBtn);
         }, 400);
 
@@ -762,9 +1027,7 @@ function checkLevel(level) {
         fb.className = 'feedback-box show error';
         fb.innerHTML = `<div class="fb-icon">🤔</div>
             <div class="fb-title">Try again!</div>
-            <div class="fb-body">${level === 2
-                ? 'Look for the two players with the highest OBP for the lowest price. Stars don\'t matter!'
-                : 'Remember: you only have $15M. Focus on OBP, not home runs or popularity!'}</div>`;
+            <div class="fb-body">${LEVEL_ERROR[level] || LEVEL_ERROR[3]}</div>`;
 
         setTimeout(() => {
             ls.selected = [];
@@ -777,35 +1040,81 @@ function checkLevel(level) {
 }
 
 // ─── BREAKDOWN TABLE ──────────────────────────────────────────────────────────
+function playerValueScore(p, statMode) {
+    if (statMode === 'ops')       return ((p.ops / p.salary) * 1000);
+    if (statMode === 'war')       return ((p.war / p.salary) * 10);
+    if (statMode === 'composite') return (((p.ops + p.war / 10) / p.salary) * 100);
+    return ((p.obp / p.salary) * 1000); // default obp
+}
+
 function showBreakdown(level) {
-    const lv  = LEVELS[level];
-    const sel = state.levels[level].selected;
-    const maxVal = Math.max(...lv.players.map(p => parseFloat(valueScore(p.obp, p.salary))));
+    const lv      = LEVELS[level];
+    const sel     = state.levels[level].selected;
+    const statMode = lv.statMode || 'obp';
+    const sorted  = [...lv.players].sort((a, b) => playerValueScore(b, statMode) - playerValueScore(a, statMode));
+    const maxVal  = Math.max(...lv.players.map(p => playerValueScore(p, statMode)));
 
-    const sorted = [...lv.players].sort((a, b) => parseFloat(valueScore(b.obp, b.salary)) - parseFloat(valueScore(a.obp, a.salary)));
+    let titleText, headHTML, rowFn;
 
-    const rows = sorted.map(p => {
-        const vs   = parseFloat(valueScore(p.obp, p.salary));
-        const pct  = Math.round((vs / maxVal) * 100);
-        const isPick = sel.includes(p.id);
-        const isOpt  = lv.optimal.includes(p.id);
-        return `<div class="bd-row${isPick ? ' your-pick' : ''}${isOpt ? ' optimal' : ''}">
+    if (statMode === 'ops') {
+        titleText = '📊 Player Value Rankings — OPS ÷ Salary × 1000';
+        headHTML  = `<span></span><span>Player</span><span>OPS</span><span>Salary</span><span>Value Score</span>`;
+        rowFn = (p, vs, pct, isPick, isOpt) => `
+            <span>${p.emoji}</span>
+            <span>Player ${p.id}${isPick ? ' <span style="color:var(--green);font-size:0.75rem">✓ Your Pick</span>' : ''}${isOpt && !isPick ? ' <span style="color:var(--gold);font-size:0.75rem">★ Best</span>' : ''}</span>
+            <span style="color:${opsColor(p.ops)};font-weight:700">${p.ops.toFixed(3)}</span>
+            <span>$${p.salary}M</span>
+            <div class="val-bar"><span class="val-num">${vs.toFixed(1)}</span><div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div></div>`;
+    } else if (statMode === 'war') {
+        titleText = '📊 Player Value Rankings — WAR ÷ Salary × 10';
+        headHTML  = `<span></span><span>Player</span><span>WAR</span><span>Salary</span><span>Value Score</span>`;
+        rowFn = (p, vs, pct, isPick, isOpt) => `
+            <span>${p.emoji}</span>
+            <span>Player ${p.id}${isPick ? ' <span style="color:var(--green);font-size:0.75rem">✓ Your Pick</span>' : ''}${isOpt && !isPick ? ' <span style="color:var(--gold);font-size:0.75rem">★ Best</span>' : ''}</span>
+            <span style="color:${warColor(p.war)};font-weight:700">${p.war.toFixed(1)}</span>
+            <span>$${p.salary}M</span>
+            <div class="val-bar"><span class="val-num">${vs.toFixed(1)}</span><div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div></div>`;
+    } else if (statMode === 'composite') {
+        titleText = '📊 Player Value Rankings — (OPS + WAR÷10) ÷ Salary × 100';
+        headHTML  = `<span></span><span>Player</span><span>OPS</span><span>WAR</span><span>Salary</span><span>Score</span>`;
+        rowFn = (p, vs, pct, isPick, isOpt) => `
+            <span>${p.emoji}</span>
+            <span>Player ${p.id}${isPick ? ' <span style="color:var(--green);font-size:0.75rem">✓ Your Pick</span>' : ''}${isOpt && !isPick ? ' <span style="color:var(--gold);font-size:0.75rem">★ Best</span>' : ''}</span>
+            <span style="color:${opsColor(p.ops)};font-weight:700">${p.ops.toFixed(3)}</span>
+            <span style="color:${warColor(p.war)};font-weight:700">${p.war.toFixed(1)}</span>
+            <span>$${p.salary}M</span>
+            <div class="val-bar"><span class="val-num">${vs.toFixed(1)}</span><div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div></div>`;
+    } else {
+        titleText = '📊 Player Value Rankings — OBP ÷ Salary × 1000';
+        headHTML  = `<span></span><span>Player</span><span>OBP</span><span>Salary</span><span>Value Score</span>`;
+        rowFn = (p, vs, pct, isPick, isOpt) => `
             <span>${p.emoji}</span>
             <span>Player ${p.id}${isPick ? ' <span style="color:var(--green);font-size:0.75rem">✓ Your Pick</span>' : ''}${isOpt && !isPick ? ' <span style="color:var(--gold);font-size:0.75rem">★ Best</span>' : ''}</span>
             <span style="color:${obpColor(p.obp)};font-weight:700">${p.obp.toFixed(3)}</span>
             <span>$${p.salary}M</span>
-            <div class="val-bar">
-                <span class="val-num">${vs}</span>
-                <div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div>
-            </div>
+            <div class="val-bar"><span class="val-num">${vs.toFixed(1)}</span><div class="val-track"><div class="val-fill" style="width:${pct}%"></div></div></div>`;
+    }
+
+    // For composite, use 6-column grid
+    const gridCols = statMode === 'composite'
+        ? 'grid-template-columns: 36px 1fr 62px 52px 62px 80px;'
+        : 'grid-template-columns: 36px 1fr 62px 62px 90px;';
+
+    const rows = sorted.map(p => {
+        const vs     = playerValueScore(p, statMode);
+        const pct    = Math.round((vs / maxVal) * 100);
+        const isPick = sel.includes(p.id);
+        const isOpt  = lv.optimal.includes(p.id);
+        return `<div class="bd-row${isPick ? ' your-pick' : ''}${isOpt ? ' optimal' : ''}" style="${gridCols}">
+            ${rowFn(p, vs, pct, isPick, isOpt)}
         </div>`;
     }).join('');
 
     const bd = document.getElementById(`breakdown-${level}`);
     bd.className = 'breakdown show';
     bd.innerHTML = `
-        <div class="bd-title">📊 Player Value Rankings — OBP ÷ Salary × 1000</div>
-        <div class="bd-head"><span></span><span>Player</span><span>OBP</span><span>Salary</span><span>Value Score</span></div>
+        <div class="bd-title">${titleText}</div>
+        <div class="bd-head" style="${gridCols}">${headHTML}</div>
         ${rows}`;
 }
 
@@ -815,7 +1124,7 @@ function goToLevel(level) {
     const next = document.getElementById(level === 'final' ? 'screen-final' : `screen-${level}`);
 
     if (level !== 'final') state.currentLevel = level;
-    else state.currentLevel = 4;
+    else state.currentLevel = 7;
 
     renderProgress();
 
@@ -843,9 +1152,10 @@ function goToLevel(level) {
 
 // ─── ACHIEVEMENTS ─────────────────────────────────────────────────────────────
 const ACHIEVEMENTS = [
-    { id: 'complete',  icon: '🏆', label: 'Moneyball Master',  desc: 'Completed all levels'       },
-    { id: 'firstTry',  icon: '🎯', label: 'Sharp Eye',         desc: 'First try on both drafts'   },
-    { id: 'noHints',   icon: '🧠', label: 'Self-Made Analyst', desc: 'Never used a hint'           }
+    { id: 'complete',  icon: '🏆', label: 'Moneyball Master',  desc: 'Completed all 6 levels'      },
+    { id: 'firstTry',  icon: '🎯', label: 'Sharp Eye',         desc: 'First try on all 5 drafts'   },
+    { id: 'noHints',   icon: '🧠', label: 'Self-Made Analyst', desc: 'Never used a hint'            },
+    { id: 'sixStar',   icon: '🔬', label: 'Six Star Analyst',  desc: 'First try + no hints on all 6 levels' }
 ];
 
 function renderFinalAchievements() {
@@ -853,6 +1163,7 @@ function renderFinalAchievements() {
     earned.push('complete'); // always
     if (state.achievements.firstTry) earned.push('firstTry');
     if (state.achievements.noHints)  earned.push('noHints');
+    if (state.achievements.firstTry && state.achievements.noHints) earned.push('sixStar');
 
     const grid = document.getElementById('final-ach-grid');
     grid.innerHTML = ACHIEVEMENTS.filter(a => earned.includes(a.id)).map(a =>
@@ -919,10 +1230,13 @@ function copyCode() {
 function restartGame() {
     state.currentLevel = 1;
     state.achievements = { firstTry: true, noHints: true };
-    state.sortMode = { 2: 'obp', 3: 'obp' };
+    state.sortMode = { 2: 'obp', 3: 'obp', 4: 'ops', 5: 'war', 6: 'ops' };
     state.levels = {
         2: { selected: [], hintsShown: 0, attempts: 0, completed: false },
-        3: { selected: [], hintsShown: 0, attempts: 0, completed: false }
+        3: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        4: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        5: { selected: [], hintsShown: 0, attempts: 0, completed: false },
+        6: { selected: [], hintsShown: 0, attempts: 0, completed: false }
     };
 
     // Reset quiz
@@ -931,7 +1245,7 @@ function restartGame() {
     document.getElementById('next-1').style.display = 'none';
 
     // Reset each draft level
-    [2, 3].forEach(lv => {
+    [2, 3, 4, 5, 6].forEach(lv => {
         renderPlayers(lv);
         renderBudget(lv);
 
@@ -948,10 +1262,12 @@ function restartGame() {
         const btns = document.getElementById(`btns-${lv}`);
         btns.querySelectorAll('.btn-primary:not(#check-' + lv + ')').forEach(b => b.remove());
 
-        // Reset sort buttons
-        ['obp','salary','stars'].forEach(m => {
+        // Reset sort buttons to default active state
+        const defaultSort = state.sortMode[lv];
+        const keys = SORT_KEYS[lv] || ['obp','salary','stars'];
+        keys.forEach(m => {
             const btn = document.getElementById(`sort-${lv}-${m}`);
-            if (btn) btn.classList.toggle('active', m === 'obp');
+            if (btn) btn.classList.toggle('active', m === defaultSort);
         });
     });
 
